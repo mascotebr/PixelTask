@@ -2,7 +2,7 @@ class Task {
   String key = "";
   String title = "";
   String? description;
-  DateTime? date;
+  DateTime? date = DateTime.now();
   bool isDairy = false;
   DateTime? lastFinish = DateTime.now().add(const Duration(days: -1));
 

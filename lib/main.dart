@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pixel_tasks/home_page.dart';
+import 'package:pixel_tasks/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         secondaryHeaderColor: Colors.white,
       ),
-      home: const HomePage(title: 'Flutter Demo Home Page'),
+      home: const HomePage(title: 'Pixel Tasks'),
     );
   }
 }
