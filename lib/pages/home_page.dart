@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
 import 'package:pixel_tasks/widgets/silver_pixel.dart';
+import '../model/char.dart';
 import '../model/task.dart';
 import '../utils/task_util.dart';
 
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   List<Task> tasksDaily = <Task>[];
   List<Task> tasksNotDaily = <Task>[];
   List<Task> tasksFinished = <Task>[];
+  Char char = Char();
 
   Future<void> _onCreateTask(Task task) async {
     await TaskUtil.writeTask(task);
@@ -41,6 +44,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> readAllTasks() async {
+    char = await CharUtil.setChar();
+
     tasks = await TaskUtil.readTasks();
     tasksNotDaily = tasks.where((t) => !t.isDairy).toList();
     tasksDaily = tasks.where((t) => t.isDairy).toList();
@@ -50,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     tasks.addAll(tasksNotDaily);
 
     tasksFinished = await TaskUtil.readTasksFinished();
+
     setState(() {});
   }
 
@@ -63,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: CustomScrollView(
           slivers: [
-            const SilverPixel(),
+            SilverPixel(char: char),
             SliverList(
                 delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -81,20 +87,19 @@ class _HomePageState extends State<HomePage> {
                               fontWeight: FontWeight.w900),
                         ),
                       ),
-                    if (HelpUtil.isToday(tasks[index].lastFinish) &&
-                        tasks[index].isDairy &&
-                        tasks.isNotEmpty)
+                    if (tasks.isNotEmpty &&
+                        HelpUtil.isToday(tasks[index].lastFinish) &&
+                        tasks[index].isDairy)
                       cardDismissible(tasks[index]),
-                    if (!HelpUtil.isToday(tasks[index].lastFinish) &&
-                        tasks[index].isDairy &&
-                        tasks.isNotEmpty)
+                    if (tasks.isNotEmpty &&
+                        !HelpUtil.isToday(tasks[index].lastFinish) &&
+                        tasks[index].isDairy)
                       card(tasks[index]),
-                    if (index == tasksDaily.length &&
-                        tasksNotDaily.isNotEmpty &&
-                        tasks.isNotEmpty)
+                    if (tasks.isNotEmpty && index == tasksDaily.length)
                       divider(),
-                    if (!tasks[index].isDairy && tasks.isNotEmpty)
+                    if (tasks.isNotEmpty && !tasks[index].isDairy)
                       cardDismissible(tasks[index]),
+                    if (index == tasks.length - 1) const SizedBox(height: 100),
                   ],
                 );
               },
@@ -105,6 +110,7 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => showDialogTask(context, _onCreateTask),
           tooltip: 'New Task',
+          backgroundColor: Color(char.color),
           child: const Icon(Icons.add),
         ),
         bottomNavigationBar: NavigationUtil.bottomNavigator(1, context));

@@ -49,7 +49,8 @@ class _ArchivePageState extends State<ArchivePage> {
                 child: Text(
                 'No tasks here :(',
                 style: TextStyle(
-                  color: Color(0xff3B4254),
+                  color: Colors.white,
+                  fontSize: 22,
                 ),
               )),
         bottomNavigationBar: NavigationUtil.bottomNavigator(2, context));

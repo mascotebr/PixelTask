@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/pages/archive_page.dart';
 import 'package:pixel_tasks/pages/home_page.dart';
+import 'package:pixel_tasks/pages/pixel_char_page.dart';
 
 class NavigationUtil {
   static Widget bottomNavigator(int selectedIndex, BuildContext context) {
@@ -41,8 +42,8 @@ class NavigationUtil {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => const HomePage(
-              title: 'Pixel Tasks',
+            builder: (BuildContext context) => const PixelCharPage(
+              title: 'Pixel Char',
             ),
           ),
         );

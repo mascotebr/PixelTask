@@ -5,6 +5,7 @@ class Task {
   DateTime? date = DateTime.now();
   bool isDairy = false;
   DateTime? lastFinish = DateTime.now().add(const Duration(days: -1));
+  double exp = 5;
 
   Task();
 
@@ -14,7 +15,8 @@ class Task {
         'description': description,
         'date': date?.toIso8601String(),
         'isDairy': isDairy,
-        'lastFinish': lastFinish?.toIso8601String()
+        'lastFinish': lastFinish?.toIso8601String(),
+        'exp': exp,
       };
 
   Task.fromJson(Map json)
@@ -23,5 +25,6 @@ class Task {
         description = json['description'],
         date = DateTime.parse(json['date']),
         isDairy = json['isDairy'],
-        lastFinish = DateTime.parse(json['lastFinish']);
+        lastFinish = DateTime.parse(json['lastFinish']),
+        exp = json['exp'] ?? 5;
 }
