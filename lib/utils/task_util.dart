@@ -58,6 +58,25 @@ class TaskUtil {
     return fileFinish.writeAsString(json);
   }
 
+  static Future<File> deleteTask(Task task) async {
+    final file = await _localFile;
+    List<Task> tasks = await readTasks();
+
+    int indexFind = 0;
+    int i = 0;
+    do {
+      if (tasks[i].key == task.key) {
+        indexFind = i;
+      }
+      i++;
+    } while (indexFind == 0 && i < tasks.length);
+
+    tasks.removeAt(indexFind);
+
+    String json = jsonEncode(tasks);
+    return file.writeAsString(json);
+  }
+
   static Future<List<Task>> readTasks() async {
     try {
       final file = await _localFile;

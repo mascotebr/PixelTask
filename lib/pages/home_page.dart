@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
@@ -8,6 +10,7 @@ import 'package:pixel_tasks/widgets/silver_pixel.dart';
 import '../model/char.dart';
 import '../model/task.dart';
 import '../utils/task_util.dart';
+import '../widgets/dialog_splash.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
@@ -17,7 +20,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     readAllTasks();
@@ -38,7 +41,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _onFinishTask(Task task) async {
+    if (CharUtil.char.exp + task.exp >= CharUtil.maxExp) {
+      showDialogLevelUp(context, task.exp);
+    } else {
+      showDialogExp(context, task.exp);
+    }
+
     await TaskUtil.writeTaskFinish(task);
+    await CharUtil.addExp(task.exp);
+    await readAllTasks();
+    setState(() {});
+  }
+
+  Future<void> _onDeleteTask(Task task) async {
+    await TaskUtil.deleteTask(task);
     await readAllTasks();
     setState(() {});
   }
@@ -82,23 +98,24 @@ class _HomePageState extends State<HomePage> {
                         child: Text(
                           "My Tasks",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900),
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
                       ),
                     if (tasks.isNotEmpty &&
                         HelpUtil.isToday(tasks[index].lastFinish) &&
                         tasks[index].isDairy)
-                      cardDismissible(tasks[index]),
+                      cardDismissible(tasks[index], false),
                     if (tasks.isNotEmpty &&
                         !HelpUtil.isToday(tasks[index].lastFinish) &&
                         tasks[index].isDairy)
-                      card(tasks[index]),
+                      cardDismissible(tasks[index], true),
                     if (tasks.isNotEmpty && index == tasksDaily.length)
                       divider(),
                     if (tasks.isNotEmpty && !tasks[index].isDairy)
-                      cardDismissible(tasks[index]),
+                      cardDismissible(tasks[index], false),
                     if (index == tasks.length - 1) const SizedBox(height: 100),
                   ],
                 );
@@ -116,9 +133,12 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: NavigationUtil.bottomNavigator(1, context));
   }
 
-  Widget cardDismissible(Task task) {
+  Widget cardDismissible(Task task, bool justRemove) {
     return Dismissible(
       key: Key(task.key),
+      direction: justRemove
+          ? DismissDirection.endToStart
+          : DismissDirection.horizontal,
       background: Container(
         color: const Color(0xff3B4254),
         child: Row(
@@ -138,18 +158,32 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      onDismissed: (DismissDirection duration) {
-        _onFinishTask(task);
+      secondaryBackground: Container(
+        color: const Color(0xff3B4254),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.red.withOpacity(0.8),
+                  size: 32,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      onDismissed: (DismissDirection direction) {
+        if (direction == DismissDirection.startToEnd) _onFinishTask(task);
+        if (direction == DismissDirection.endToStart) _onDeleteTask(task);
       },
       child: CardTask(
         task: task,
       ),
-    );
-  }
-
-  Widget card(Task task) {
-    return CardTask(
-      task: task,
     );
   }
 

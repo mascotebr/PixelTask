@@ -36,7 +36,7 @@ class _SilverPixelState extends State<SilverPixel> {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "${CharUtil.char.exp?.round()} / ${CharUtil.maxExp.round()}",
+                    "${CharUtil.char.exp.round()} / ${CharUtil.maxExp.round()}",
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -68,7 +68,10 @@ class _SilverPixelState extends State<SilverPixel> {
             const Center(child: FlutterLogo(size: 210)),
             Center(
               child: Text(CharUtil.char.name,
-                  style: const TextStyle(color: Colors.white, fontSize: 32.0)),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.bold)),
             )
           ],
         ),

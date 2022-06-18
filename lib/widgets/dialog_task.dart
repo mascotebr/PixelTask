@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
-import 'package:pixel_tasks/utils/char_util.dart';
 
 Future<void> showDialogTask(
     BuildContext contextMain, Function createTask) async {

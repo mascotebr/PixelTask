@@ -2,9 +2,9 @@ class Char {
   String name = "";
   String? classChar = "Warrior";
   int color = 0xFF2196F3;
-  double? exp = 0;
+  double exp = 0;
   double expMax = 20;
-  int? level = 1;
+  int level = 1;
 
   Char();
 

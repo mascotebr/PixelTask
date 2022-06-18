@@ -51,13 +51,26 @@ class _CardTaskState extends State<CardTask> {
                   ),
               ],
             ),
+            if (widget.task.repeat > 0)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 24.0, top: 6.0),
+                  child: Text(
+                    "${widget.task.repeat}",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
             if (widget.task.isDairy)
               Align(
                   alignment: Alignment.topRight,
                   child: Icon(Icons.repeat,
-                      color: HelpUtil.isToday(widget.task.lastFinish)
-                          ? Colors.yellow
-                          : Colors.grey)),
+                      color: widget.task.repeat > 0
+                          ? Colors.grey
+                          : HelpUtil.isToday(widget.task.lastFinish)
+                              ? Colors.yellow
+                              : Colors.grey)),
             if (!widget.task.isDairy)
               Align(
                 alignment: Alignment.bottomRight,

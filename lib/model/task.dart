@@ -7,6 +7,8 @@ class Task {
   DateTime? lastFinish = DateTime.now().add(const Duration(days: -1));
   double exp = 5;
 
+  int repeat = 0;
+
   Task();
 
   Map toJson() => {

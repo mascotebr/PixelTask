@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         secondaryHeaderColor: Colors.white,
+        fontFamily: 'SF',
       ),
       home: const HomePage(title: 'Pixel Tasks'),
     );

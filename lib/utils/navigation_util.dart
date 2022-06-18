@@ -28,7 +28,7 @@ class NavigationUtil {
             label: ""),
       ],
       currentIndex: selectedIndex,
-      selectedItemColor: Colors.black,
+      selectedItemColor: Colors.white,
       unselectedItemColor: const Color(0xff3B4254),
       onTap: (index) {
         onItemTapped(index, context);

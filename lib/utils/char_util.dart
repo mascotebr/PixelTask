@@ -45,13 +45,24 @@ class CharUtil {
 
   static double get maxExp {
     char.expMax = 20;
-    for (var i = 1; i < char.level!; i++) {
+    for (var i = 1; i < char.level; i++) {
       char.expMax *= 2;
     }
     return char.expMax;
   }
 
   static double widthExp(BuildContext context) {
-    return MediaQuery.of(context).size.width * (char.exp! / maxExp);
+    return MediaQuery.of(context).size.width * (char.exp / maxExp);
+  }
+
+  static Future<void> addExp(double exp) async {
+    char.exp += exp;
+    if (char.exp >= char.expMax) {
+      char.exp -= char.expMax;
+      char.level++;
+    }
+
+    await writeChar(char);
+    await setChar();
   }
 }
