@@ -1,6 +1,9 @@
+import 'package:pixel_tasks/model/class_char.dart';
+import 'package:pixel_tasks/utils/char_util.dart';
+
 class Char {
   String name = "";
-  String? classChar = "Warrior";
+  ClassChar classChar = ClassChar.warrior;
   int color = 0xFF2196F3;
   double exp = 0;
   double expMax = 20;
@@ -10,7 +13,7 @@ class Char {
 
   Map toJson() => {
         'name': name,
-        'classChar': classChar,
+        'classChar': classChar.toString(),
         'color': color,
         'exp': exp,
         'level': level,
@@ -18,7 +21,7 @@ class Char {
 
   Char.fromJson(Map json)
       : name = json['name'] ?? "",
-        classChar = json['classChar'] ?? "Warrior",
+        classChar = CharUtil.getClassChar(json['classChar']),
         color = json['color'] ?? 0xFF2196F3,
         exp = json['exp'] ?? 0,
         level = json['level'] ?? 1;

@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
-import 'package:pixel_tasks/widgets/silver_pixel.dart';
-import '../model/char.dart';
 import '../model/task.dart';
 import '../utils/task_util.dart';
 import '../widgets/dialog_splash.dart';
@@ -32,7 +29,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Task> tasksDaily = <Task>[];
   List<Task> tasksNotDaily = <Task>[];
   List<Task> tasksFinished = <Task>[];
-  Char char = Char();
 
   Future<void> _onCreateTask(Task task) async {
     await TaskUtil.writeTask(task);
@@ -60,7 +56,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> readAllTasks() async {
-    char = await CharUtil.setChar();
+    await CharUtil.setChar();
 
     tasks = await TaskUtil.readTasks();
     tasksNotDaily = tasks.where((t) => !t.isDairy).toList();
@@ -71,7 +67,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     tasks.addAll(tasksNotDaily);
 
     tasksFinished = await TaskUtil.readTasksFinished();
-
     setState(() {});
   }
 
@@ -85,7 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         body: CustomScrollView(
           slivers: [
-            SilverPixel(char: char),
+            silverPixel(),
             SliverList(
                 delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -127,7 +122,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         floatingActionButton: FloatingActionButton(
           onPressed: () => showDialogTask(context, _onCreateTask),
           tooltip: 'New Task',
-          backgroundColor: Color(char.color),
+          backgroundColor: Color(CharUtil.char.color),
           child: const Icon(Icons.add),
         ),
         bottomNavigationBar: NavigationUtil.bottomNavigator(1, context));
@@ -217,5 +212,74 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ],
         ));
+  }
+
+  Widget silverPixel() {
+    return SliverAppBar(
+      expandedHeight: 300.0,
+      backgroundColor: Color(CharUtil.char.color).withAlpha(25),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    "Level ${CharUtil.char.level}",
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${CharUtil.char.exp.round()} / ${CharUtil.maxExp.round()}",
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: 0.3,
+                    child: Container(
+                      color: Color(CharUtil.char.color),
+                      width: MediaQuery.of(context).size.width,
+                      height: 4,
+                    ),
+                  ),
+                  Container(
+                    color: Color(CharUtil.char.color),
+                    width: CharUtil.widthExp(context),
+                    height: 4,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Center(child: Image.asset(CharUtil.char.classChar.image)),
+            ),
+            Center(
+              child: Text(CharUtil.char.name,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.bold)),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

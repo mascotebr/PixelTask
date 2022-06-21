@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/model/char.dart';
+import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import '../utils/navigation_util.dart';
 import '../widgets/dialog_color.dart';
@@ -41,9 +42,11 @@ class _PixelCharPageState extends State<PixelCharPage> {
             child: Form(
               child: ListBody(
                 children: <Widget>[
-                  const SizedBox(
+                  SizedBox(
                     height: 300,
-                    child: FlutterLogo(),
+                    child: Image.asset(
+                      CharUtil.char.classChar.image,
+                    ),
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
@@ -63,7 +66,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                           borderRadius: BorderRadius.circular(15),
                         )),
                     onChanged: (name) {
-                      CharUtil.char.name = name;
+                      CharUtil.char.name = name.trim();
                     },
                     validator: (name) {},
                   ),
@@ -90,7 +93,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                           padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.7,
-                            child: DropdownButton<String>(
+                            child: DropdownButton<ClassChar>(
                               value: CharUtil.char.classChar,
                               icon: const Icon(
                                 Icons.arrow_drop_down,
@@ -102,21 +105,19 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               underline: Container(
                                 height: 0,
                               ),
-                              onChanged: (String? newValue) {
+                              onChanged: (ClassChar? newValue) {
                                 setState(() {
-                                  CharUtil.char.classChar = newValue!;
+                                  CharUtil.char.classChar = ClassChar.values
+                                      .firstWhere((e) => e == newValue);
                                 });
                               },
-                              items: <String>[
-                                'Warrior',
-                                'Thief',
-                                'Mage',
-                                'Cavalier'
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
+                              items: ClassChar.values
+                                  .map<DropdownMenuItem<ClassChar>>(
+                                      (ClassChar value) {
+                                return DropdownMenuItem<ClassChar>(
                                   value: value,
                                   child: Text(
-                                    value,
+                                    value.string,
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 );

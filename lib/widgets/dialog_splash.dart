@@ -71,13 +71,13 @@ Widget dialogLevelUp(BuildContext context, double exp) {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
+            children: const [
+              Icon(
                 Icons.file_upload_sharp,
                 color: Colors.yellow,
                 size: 32,
               ),
-              const Text(
+              Text(
                 "Level up!",
                 style: TextStyle(color: Colors.yellow, fontSize: 32),
               )

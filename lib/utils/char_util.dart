@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../model/char.dart';
+import '../model/class_char.dart';
 
 class CharUtil {
   static Char char = Char();
@@ -64,5 +65,20 @@ class CharUtil {
 
     await writeChar(char);
     await setChar();
+  }
+
+  static ClassChar getClassChar(String string) {
+    switch (string) {
+      case "ClassChar.warrior":
+        return ClassChar.warrior;
+      case "ClassChar.thief":
+        return ClassChar.thief;
+      case "ClassChar.mage":
+        return ClassChar.mage;
+      case "ClassChar.archer":
+        return ClassChar.archer;
+    }
+
+    return ClassChar.warrior;
   }
 }
