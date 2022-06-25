@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/utils/bodys_util.dart';
 
 import '../model/task.dart';
 import '../utils/navigation_util.dart';
@@ -40,30 +41,91 @@ class _ArchivePageState extends State<ArchivePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: const Color(0xff3B4254),
-        appBar: AppBar(
-          title: Text(widget.title),
-          backgroundColor: const Color.fromARGB(255, 38, 44, 58),
-        ),
-        body: tasksFinished.isNotEmpty
-            ? ListView.builder(
-                itemCount: tasksFinished.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return CardTask(
-                    task: tasksFinished[index],
-                  );
-                },
-              )
-            : const Center(
-                child: Text(
-                'No tasks here :(',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                ),
-              )),
-        bottomNavigationBar: NavigationUtil.bottomNavigator(2, context));
+    return BodysUtil.bodyResponsiveHome(
+        context,
+        Scaffold(
+            backgroundColor: const Color(0xff3B4254),
+            appBar: AppBar(
+              title: Text(widget.title),
+              backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+            ),
+            body: tasksFinished.isNotEmpty
+                ? ListView.builder(
+                    itemCount: tasksFinished.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CardTask(
+                        task: tasksFinished[index],
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text(
+                    'No tasks here :(',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                    ),
+                  )),
+            bottomNavigationBar: NavigationUtil.bottomNavigator(2, context)),
+
+        //Windows
+
+        Scaffold(
+            backgroundColor: const Color(0xff3B4254),
+            appBar: AppBar(
+              toolbarHeight: 0,
+              backgroundColor: Colors.transparent,
+            ),
+            body: Row(
+              children: [
+                BodysUtil.navegationDesktop(context, 2),
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 8.0,
+                    top: 16.0,
+                  ),
+                  width: MediaQuery.of(context).size.width * 0.8 - 8.0,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                    ),
+                    color: Colors.black.withOpacity(0.1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 24.0, right: 24.0, top: 16.0),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 24.0, bottom: 16.0, left: 16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 16.0),
+                              child: Text(
+                                "Completed Tasks",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                            for (int index = 0;
+                                index < tasksFinished.length;
+                                index++)
+                              CardTask(task: tasksFinished[index]),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )));
   }
 
   Widget divider() {

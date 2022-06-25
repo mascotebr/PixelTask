@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../model/char.dart';
@@ -80,5 +81,71 @@ class CharUtil {
     }
 
     return ClassChar.warrior;
+  }
+
+  static Widget pixelChar(
+      BuildContext context, double minusWidth, double maxWidthPorcent) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                "Level ${CharUtil.char.level}",
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "${CharUtil.char.exp.round()} / ${CharUtil.maxExp.round()}",
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 0.3,
+                child: Container(
+                  color: Color(CharUtil.char.color),
+                  width: MediaQuery.of(context).size.width - minusWidth,
+                  height: 4,
+                ),
+              ),
+              Container(
+                color: Color(CharUtil.char.color),
+                width: CharUtil.widthExp(context) * maxWidthPorcent,
+                height: 4,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Center(child: Image.asset(CharUtil.char.classChar.image)),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Center(
+            child: Text(CharUtil.char.name,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 28.0,
+                    fontWeight: FontWeight.bold)),
+          ),
+        )
+      ],
+    );
   }
 }

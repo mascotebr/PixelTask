@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
@@ -19,11 +21,14 @@ class _CardTaskState extends State<CardTask> {
       child: Card(
         color: const Color(0xff424C5E),
         elevation: 2,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          padding: EdgeInsets.only(
+              top: 12.0,
+              bottom: widget.task.description == null ? 24.0 : 12.0,
+              left: 16.0,
+              right: 16.0),
           child: Stack(children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -33,10 +38,11 @@ class _CardTaskState extends State<CardTask> {
                   width: MediaQuery.of(context).size.width * 0.7,
                   child: Text(
                     widget.task.title.trim(),
+                    textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300),
                   ),
                 ),
                 if (widget.task.description != null)
@@ -44,6 +50,7 @@ class _CardTaskState extends State<CardTask> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.task.description!.trim(),
+                      textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -58,6 +65,7 @@ class _CardTaskState extends State<CardTask> {
                   padding: const EdgeInsets.only(right: 24.0, top: 6.0),
                   child: Text(
                     "${widget.task.repeat}",
+                    textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -76,6 +84,7 @@ class _CardTaskState extends State<CardTask> {
                 alignment: Alignment.bottomRight,
                 child: Text(
                   DateFormat('dd/MM/yyyy').format(widget.task.date!),
+                  textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),

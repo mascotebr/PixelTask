@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
+import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
 import '../model/task.dart';
@@ -29,6 +31,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Task> tasksDaily = <Task>[];
   List<Task> tasksNotDaily = <Task>[];
   List<Task> tasksFinished = <Task>[];
+
+  TextEditingController taskController = TextEditingController(text: "");
 
   Future<void> _onCreateTask(Task task) async {
     await TaskUtil.writeTask(task);
@@ -72,60 +76,130 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: const Color(0xff3B4254),
-        appBar: AppBar(
-          title: Text(widget.title),
-          backgroundColor: const Color.fromARGB(255, 38, 44, 58),
-        ),
-        body: CustomScrollView(
-          slivers: [
-            silverPixel(),
-            SliverList(
-                delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return ListBody(
-                  children: [
-                    if (index == 0)
-                      const Padding(
-                        padding: EdgeInsets.only(
-                            top: 24.0, bottom: 16.0, left: 16.0),
-                        child: Text(
-                          "My Tasks",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
+    Task task = Task();
+
+    return BodysUtil.bodyResponsiveHome(
+        context,
+        Scaffold(
+            backgroundColor: const Color(0xff3B4254),
+            appBar: AppBar(
+              title: Text(widget.title),
+              backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+            ),
+            body: CustomScrollView(slivers: [
+              SliverAppBar(
+                  expandedHeight: 300.0,
+                  backgroundColor: Color(CharUtil.char.color).withAlpha(25),
+                  flexibleSpace: FlexibleSpaceBar(
+                      background: CharUtil.pixelChar(context, 0, 1))),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return taskItem(context, index, false);
+                },
+                childCount: tasks.isEmpty ? 1 : tasks.length,
+              )),
+            ]),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => showDialogTask(context, _onCreateTask),
+              tooltip: 'New Task',
+              backgroundColor: Color(CharUtil.char.color),
+              child: const Icon(Icons.add),
+            ),
+            bottomNavigationBar: NavigationUtil.bottomNavigator(1, context)),
+
+        //Windows
+
+        Scaffold(
+            backgroundColor: const Color(0xff3B4254),
+            appBar: AppBar(
+              toolbarHeight: 0,
+              backgroundColor: Colors.transparent,
+            ),
+            body: Row(
+              children: [
+                BodysUtil.navegationDesktop(context, 1),
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 8.0,
+                    top: 16.0,
+                  ),
+                  width: MediaQuery.of(context).size.width * 0.8 - 8.0,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                    ),
+                    color: Colors.black.withOpacity(0.1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 24.0, right: 24.0, top: 16.0),
+                    child: Stack(
+                      children: [
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (int index = 0;
+                                  index < tasks.length ||
+                                      (tasks.isEmpty && index == 0);
+                                  index++)
+                                taskItem(context, index, true),
+                            ],
                           ),
                         ),
-                      ),
-                    if (tasks.isNotEmpty &&
-                        HelpUtil.isToday(tasks[index].lastFinish) &&
-                        tasks[index].isDairy)
-                      cardDismissible(tasks[index], false),
-                    if (tasks.isNotEmpty &&
-                        !HelpUtil.isToday(tasks[index].lastFinish) &&
-                        tasks[index].isDairy)
-                      cardDismissible(tasks[index], true),
-                    if (tasks.isNotEmpty && index == tasksDaily.length)
-                      divider(),
-                    if (tasks.isNotEmpty && !tasks[index].isDairy)
-                      cardDismissible(tasks[index], false),
-                    if (index == tasks.length - 1) const SizedBox(height: 100),
-                  ],
-                );
-              },
-              childCount: tasks.isEmpty ? 1 : tasks.length,
-            )),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => showDialogTask(context, _onCreateTask),
-          tooltip: 'New Task',
-          backgroundColor: Color(CharUtil.char.color),
-          child: const Icon(Icons.add),
-        ),
-        bottomNavigationBar: NavigationUtil.bottomNavigator(1, context));
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Card(
+                              elevation: 8,
+                              color: Colors.transparent,
+                              child: Form(
+                                child: TextFormField(
+                                  controller: taskController,
+                                  textInputAction: TextInputAction.next,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                      filled: true,
+                                      fillColor: const Color(0xff3B4254),
+                                      labelText: 'New Task',
+                                      labelStyle:
+                                          const TextStyle(color: Colors.white),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.white10),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.white54),
+                                        borderRadius: BorderRadius.circular(4),
+                                      )),
+                                  onChanged: (title) {
+                                    task.title = title;
+                                  },
+                                  onEditingComplete: () {
+                                    FocusScope.of(context).unfocus();
+                                    taskController.text = "";
+                                    task.date = DateTime.now();
+                                    _onCreateTask(task);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )));
   }
 
   Widget cardDismissible(Task task, bool justRemove) {
@@ -214,72 +288,53 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ));
   }
 
-  Widget silverPixel() {
-    return SliverAppBar(
-      expandedHeight: 300.0,
-      backgroundColor: Color(CharUtil.char.color).withAlpha(25),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    "Level ${CharUtil.char.level}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+  Widget taskItem(BuildContext context, int index, bool windows) {
+    return ListBody(
+      children: [
+        if (index == 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 24.0, bottom: 16.0, left: 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "My Tasks",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
                   ),
-                  Text(
-                    "${CharUtil.char.exp.round()} / ${CharUtil.maxExp.round()}",
-                    style: const TextStyle(
+                ),
+                if (windows)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      DateFormat('EEEE, MMMM d').format(DateTime.now()),
+                      style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Stack(
-                children: [
-                  Opacity(
-                    opacity: 0.3,
-                    child: Container(
-                      color: Color(CharUtil.char.color),
-                      width: MediaQuery.of(context).size.width,
-                      height: 4,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w100,
+                      ),
                     ),
                   ),
-                  Container(
-                    color: Color(CharUtil.char.color),
-                    width: CharUtil.widthExp(context),
-                    height: 4,
-                  ),
-                ],
-              ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: Center(child: Image.asset(CharUtil.char.classChar.image)),
-            ),
-            Center(
-              child: Text(CharUtil.char.name,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.bold)),
-            )
-          ],
-        ),
-      ),
+          ),
+        if (tasks.isNotEmpty &&
+            HelpUtil.isToday(tasks[index].lastFinish) &&
+            tasks[index].isDairy)
+          cardDismissible(tasks[index], false),
+        if (tasks.isNotEmpty &&
+            !HelpUtil.isToday(tasks[index].lastFinish) &&
+            tasks[index].isDairy)
+          cardDismissible(tasks[index], true),
+        if (tasks.isNotEmpty && index == tasksDaily.length && index > 0)
+          divider(),
+        if (tasks.isNotEmpty && !tasks[index].isDairy)
+          cardDismissible(tasks[index], false),
+        if (index == tasks.length - 1) const SizedBox(height: 100),
+      ],
     );
   }
 }
