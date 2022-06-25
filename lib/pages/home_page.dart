@@ -33,6 +33,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Task> tasksFinished = <Task>[];
 
   TextEditingController taskController = TextEditingController(text: "");
+  TextEditingController dateController = TextEditingController();
+
+  static Task taskSelected = Task();
 
   Future<void> _onCreateTask(Task task) async {
     await TaskUtil.writeTask(task);
@@ -124,7 +127,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     left: 8.0,
                     top: 16.0,
                   ),
-                  width: MediaQuery.of(context).size.width * 0.8 - 8.0,
+                  width: MediaQuery.of(context).size.width *
+                          (taskSelected.title != "" ? 0.5 : 0.8) -
+                      8.0,
                   height: MediaQuery.of(context).size.height,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -186,6 +191,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   onEditingComplete: () {
                                     FocusScope.of(context).unfocus();
                                     taskController.text = "";
+                                    task.key = UniqueKey().toString();
                                     task.date = DateTime.now();
                                     _onCreateTask(task);
                                   },
@@ -197,62 +203,71 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                )
+                ),
+                if (taskSelected.title != "")
+                  editTaskDesktop(context, taskSelected),
               ],
             )));
   }
 
   Widget cardDismissible(Task task, bool justRemove) {
-    return Dismissible(
-      key: Key(task.key),
-      direction: justRemove
-          ? DismissDirection.endToStart
-          : DismissDirection.horizontal,
-      background: Container(
-        color: const Color(0xff3B4254),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Icon(
-                  Icons.check_circle,
-                  color: Colors.green.withOpacity(0.8),
-                  size: 32,
+    return InkWell(
+      child: Dismissible(
+        key: Key(task.key),
+        direction: justRemove
+            ? DismissDirection.endToStart
+            : DismissDirection.horizontal,
+        background: Container(
+          color: const Color(0xff3B4254),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.green.withOpacity(0.8),
+                    size: 32,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      secondaryBackground: Container(
-        color: const Color(0xff3B4254),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Icon(
-                  Icons.delete,
-                  color: Colors.red.withOpacity(0.8),
-                  size: 32,
+        secondaryBackground: Container(
+          color: const Color(0xff3B4254),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.red.withOpacity(0.8),
+                    size: 32,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+        onDismissed: (DismissDirection direction) {
+          if (direction == DismissDirection.startToEnd) _onFinishTask(task);
+          if (direction == DismissDirection.endToStart) _onDeleteTask(task);
+        },
+        child: CardTask(
+          task: task,
         ),
       ),
-      onDismissed: (DismissDirection direction) {
-        if (direction == DismissDirection.startToEnd) _onFinishTask(task);
-        if (direction == DismissDirection.endToStart) _onDeleteTask(task);
+      onTap: () {
+        setState(() {
+          taskSelected = task;
+        });
       },
-      child: CardTask(
-        task: task,
-      ),
     );
   }
 
@@ -335,6 +350,154 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           cardDismissible(tasks[index], false),
         if (index == tasks.length - 1) const SizedBox(height: 100),
       ],
+    );
+  }
+
+  Widget editTaskDesktop(BuildContext context, Task taskEdit) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.3,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: InkWell(
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      taskSelected = Task();
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: SingleChildScrollView(
+              child: Form(
+                child: ListBody(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: TextFormField(
+                        initialValue: taskEdit.title,
+                        textInputAction: TextInputAction.next,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            labelText: 'Title',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white10),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white54),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                        onChanged: (title) {
+                          setState(() {
+                            taskEdit.title = title;
+                          });
+                        },
+                        validator: (title) {},
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: TextFormField(
+                        initialValue: taskEdit.description,
+                        textInputAction: TextInputAction.next,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            labelText: 'Description',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white10),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white54),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                        onChanged: (description) {
+                          setState(() {
+                            taskEdit.description = description;
+                          });
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: taskEdit.isDairy,
+                            fillColor:
+                                MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                return Colors
+                                    .white10; // Use the component's default.
+                              },
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                taskEdit.isDairy = value!;
+                              });
+                            },
+                          ),
+                          const Text(
+                            "Daily",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!taskEdit.isDairy)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: TextFormField(
+                          controller: dateController,
+                          textInputAction: TextInputAction.next,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                              labelText: 'Date',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 2, color: Colors.white10),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 2, color: Colors.white54),
+                                borderRadius: BorderRadius.circular(15),
+                              )),
+                          onTap: () async {
+                            taskEdit.date = DateTime.now();
+                            FocusScope.of(context).unfocus();
+                            selectDate(context, taskEdit, dateController);
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -107,7 +107,7 @@ Future<void> showDialogTask(
                                 width: 2, color: Colors.white54),
                             borderRadius: BorderRadius.circular(15),
                           )),
-                      onTap: () async {
+                      onTap: () {
                         FocusScope.of(contextStf).unfocus();
                         selectDate(contextStf, task, dateController);
                       },
@@ -165,7 +165,7 @@ Future<void> showDialogTask(
   );
 }
 
-selectDate(BuildContext context, Task task,
+void selectDate(BuildContext context, Task task,
     TextEditingController dateController) async {
   DateTime? newSelectedDate = await showDatePicker(
       context: context,

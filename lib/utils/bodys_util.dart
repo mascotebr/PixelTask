@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../model/task.dart';
 import 'char_util.dart';
 import 'navigation_util.dart';
 
