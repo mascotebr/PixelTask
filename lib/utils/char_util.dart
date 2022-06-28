@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pixel_tasks/model/achievements.dart';
 
 import '../model/char.dart';
 import '../model/class_char.dart';

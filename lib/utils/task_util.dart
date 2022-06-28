@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:pixel_tasks/model/Difficulty.dart';
 
 import '../model/task.dart';
 
@@ -58,6 +59,25 @@ class TaskUtil {
     return fileFinish.writeAsString(json);
   }
 
+  static Future<File> editTask(Task task) async {
+    final file = await _localFile;
+    List<Task> tasks = await readTasks();
+
+    int indexFind = 0;
+    int i = 0;
+    do {
+      if (tasks[i].key == task.key) {
+        indexFind = i;
+      }
+      i++;
+    } while (indexFind == 0 && i < tasks.length);
+
+    tasks[indexFind] = task;
+
+    String json = jsonEncode(tasks);
+    return file.writeAsString(json);
+  }
+
   static Future<File> deleteTask(Task task) async {
     final file = await _localFile;
     List<Task> tasks = await readTasks();
@@ -82,7 +102,11 @@ class TaskUtil {
       final file = await _localFile;
       final contents = await file.readAsString();
       Iterable list = json.decode(contents);
-      return list.map((model) => Task.fromJson(model)).toList();
+      List<Task> tasks = list.map((model) => Task.fromJson(model)).toList();
+
+      tasks.sort(((a, b) => a.date!.compareTo(b.date!)));
+
+      return tasks;
     } catch (e) {
       return <Task>[];
     }
@@ -97,5 +121,31 @@ class TaskUtil {
     } catch (e) {
       return <Task>[];
     }
+  }
+
+  static Difficulty getDifficulty(String string) {
+    switch (string) {
+      case "Difficulty.easy":
+        return Difficulty.easy;
+      case "Difficulty.medium":
+        return Difficulty.medium;
+      case "Difficulty.hard":
+        return Difficulty.hard;
+    }
+
+    return Difficulty.easy;
+  }
+
+  static Difficulty getDifficultyInt(int int) {
+    switch (int) {
+      case 1:
+        return Difficulty.easy;
+      case 2:
+        return Difficulty.medium;
+      case 3:
+        return Difficulty.hard;
+    }
+
+    return Difficulty.easy;
   }
 }

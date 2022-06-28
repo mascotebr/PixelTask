@@ -71,7 +71,6 @@ class _PixelCharPageState extends State<PixelCharPage> {
                         onChanged: (name) {
                           CharUtil.char.name = name.trim();
                         },
-                        validator: (name) {},
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 8.0),
@@ -189,6 +188,9 @@ class _PixelCharPageState extends State<PixelCharPage> {
                             ),
                             onPressed: () async {
                               await CharUtil.writeChar(CharUtil.char);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Saved')),
+                              );
                               setState(() {});
                             },
                           ),
@@ -256,7 +258,6 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 CharUtil.char.name = name.trim();
                               });
                             },
-                            validator: (name) {},
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 8.0),
@@ -378,6 +379,9 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 ),
                                 onPressed: () async {
                                   await CharUtil.writeChar(CharUtil.char);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Saved')),
+                                  );
                                 },
                               ),
                             ),

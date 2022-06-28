@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pixel_tasks/model/class_char.dart';
+import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
@@ -39,21 +39,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   static Task taskSelected = Task();
 
+  final _formKey = GlobalKey<FormState>();
+  final _formKeyTask = GlobalKey<FormState>();
+
   Future<void> _onCreateTask(Task task) async {
     await TaskUtil.writeTask(task);
     await readAllTasks();
     setState(() {});
   }
 
+  Future<void> _onEditTask(Task task) async {
+    await TaskUtil.editTask(task);
+    await readAllTasks();
+    setState(() {});
+  }
+
   Future<void> _onFinishTask(Task task) async {
-    if (CharUtil.char.exp + task.exp >= CharUtil.maxExp) {
-      showDialogLevelUp(context, task.exp);
+    if (CharUtil.char.exp + task.difficulty.exp >= CharUtil.maxExp) {
+      showDialogLevelUp(context, task.difficulty.exp);
     } else {
-      showDialogExp(context, task.exp);
+      showDialogExp(context, task.difficulty.exp);
     }
 
     await TaskUtil.writeTaskFinish(task);
-    await CharUtil.addExp(task.exp);
+
+    double exp = 0;
+
+    if (!task.isDairy &&
+        DateTime.now().isBefore(task.date!.add(const Duration(days: 1)))) {
+      exp = task.difficulty.exp / 2;
+    } else {
+      exp = task.difficulty.exp;
+    }
+
+    await CharUtil.addExp(exp);
     await readAllTasks();
     setState(() {});
   }
@@ -106,7 +125,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               )),
             ]),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => showDialogTask(context, _onCreateTask, null),
+              onPressed: () =>
+                  showDialogTask(context, _onCreateTask, _onEditTask, null),
               tooltip: 'New Task',
               backgroundColor: Color(CharUtil.char.color),
               child: const Icon(Icons.add),
@@ -163,34 +183,55 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               elevation: 8,
                               color: Colors.transparent,
                               child: Form(
+                                key: _formKeyTask,
                                 child: TextFormField(
                                   controller: taskController,
                                   textInputAction: TextInputAction.next,
                                   style: const TextStyle(color: Colors.white),
                                   decoration: InputDecoration(
-                                      prefixIcon: const Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      ),
-                                      filled: true,
-                                      fillColor: const Color(0xff3B4254),
-                                      labelText: 'New Task',
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2, color: Colors.white10),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2, color: Colors.white54),
-                                        borderRadius: BorderRadius.circular(4),
-                                      )),
+                                    prefixIcon: const Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    ),
+                                    filled: true,
+                                    fillColor: const Color(0xff3B4254),
+                                    labelText: 'New Task',
+                                    labelStyle:
+                                        const TextStyle(color: Colors.white),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 2, color: Colors.white10),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 2, color: Colors.white54),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          width: 2, color: Colors.red),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    errorStyle:
+                                        const TextStyle(color: Colors.red),
+                                  ),
                                   onChanged: (title) {
                                     task.title = title;
                                   },
+                                  validator: (title) {
+                                    if (title == null ||
+                                        title.isEmpty ||
+                                        title.length < 3) {
+                                      return "Greater than 3 characters";
+                                    }
+                                    return null;
+                                  },
                                   onEditingComplete: () {
+                                    if (!_formKeyTask.currentState!
+                                        .validate()) {
+                                      return;
+                                    }
                                     FocusScope.of(context).unfocus();
                                     taskController.text = "";
                                     task.key = UniqueKey().toString();
@@ -270,7 +311,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           taskSelected = task;
         });
 
-        if (Platform.isAndroid) showDialogTask(context, _onCreateTask, task);
+        if (Platform.isAndroid) {
+          showDialogTask(context, _onCreateTask, _onEditTask, task);
+        }
         setState(() {});
       },
     );
@@ -387,6 +430,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: SingleChildScrollView(
               child: Form(
+                key: _formKey,
                 child: ListBody(
                   children: <Widget>[
                     Padding(
@@ -396,24 +440,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         textInputAction: TextInputAction.next,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                            labelText: 'Title',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2, color: Colors.white10),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  width: 2, color: Colors.white54),
-                              borderRadius: BorderRadius.circular(15),
-                            )),
+                          labelText: 'Title',
+                          labelStyle: const TextStyle(color: Colors.white),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 2, color: Colors.white10),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 2, color: Colors.white54),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 2, color: Colors.red),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          errorStyle: const TextStyle(color: Colors.red),
+                        ),
                         onChanged: (title) {
                           setState(() {
                             taskEdit.title = title;
                           });
                         },
-                        validator: (title) {},
+                        validator: (title) {
+                          if (title == null ||
+                              title.isEmpty ||
+                              title.length < 3) {
+                            return "Greater than 3 characters";
+                          }
+                          return null;
+                        },
+                        onEditingComplete: (() {
+                          _formKey.currentState!.validate();
+                        }),
                       ),
                     ),
                     Padding(
@@ -442,6 +503,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         },
                       ),
                     ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8.0, top: 16),
+                      child: Text(
+                        "Difficulty",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Slider(
+                        value: taskEdit.difficulty.index.toDouble() + 1,
+                        min: 1,
+                        max: 3,
+                        divisions: 2,
+                        activeColor: taskEdit.difficulty.color,
+                        inactiveColor: Colors.white10,
+                        onChanged: (value) {
+                          setState(
+                            () {
+                              taskEdit.difficulty =
+                                  TaskUtil.getDifficultyInt(value.toInt());
+                            },
+                          );
+                        }),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Row(
@@ -492,7 +575,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             taskEdit.date = DateTime.now();
                             FocusScope.of(context).unfocus();
                             selectDate(context, taskEdit, dateController);
-                            setState(() {});
+                            await _onEditTask(taskEdit);
                           },
                         ),
                       ),

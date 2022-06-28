@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
+import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 
 class CardTask extends StatefulWidget {
@@ -36,13 +37,25 @@ class _CardTaskState extends State<CardTask> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    widget.task.title.trim(),
-                    textScaleFactor: Platform.isAndroid ? 1 : 0.8,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300),
+                  child: Wrap(
+                    children: [
+                      Text(
+                        widget.task.title.trim(),
+                        textScaleFactor: Platform.isAndroid ? 1 : 0.8,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Icon(
+                          Icons.flag,
+                          color: widget.task.difficulty.color,
+                          size: 12,
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 if (widget.task.description != null)
@@ -85,7 +98,11 @@ class _CardTaskState extends State<CardTask> {
                 child: Text(
                   DateFormat('MM/dd/yyyy').format(widget.task.date!),
                   textScaleFactor: Platform.isAndroid ? 1 : 0.8,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      color: DateTime.now().isBefore(
+                              widget.task.date!.add(const Duration(days: 1)))
+                          ? Colors.white
+                          : Colors.red.shade300),
                 ),
               ),
           ]),

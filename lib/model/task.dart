@@ -1,3 +1,6 @@
+import 'package:pixel_tasks/model/Difficulty.dart';
+import 'package:pixel_tasks/utils/task_util.dart';
+
 class Task {
   String key = "";
   String title = "";
@@ -5,7 +8,8 @@ class Task {
   DateTime? date = DateTime.now();
   bool isDairy = false;
   DateTime? lastFinish = DateTime.now().add(const Duration(days: -1));
-  double exp = 5;
+
+  Difficulty difficulty = Difficulty.easy;
 
   int repeat = 0;
 
@@ -18,7 +22,7 @@ class Task {
         'date': date?.toIso8601String(),
         'isDairy': isDairy,
         'lastFinish': lastFinish?.toIso8601String(),
-        'exp': exp,
+        'difficulty': difficulty.toString(),
       };
 
   Task.fromJson(Map json)
@@ -28,5 +32,7 @@ class Task {
         date = DateTime.parse(json['date']),
         isDairy = json['isDairy'],
         lastFinish = DateTime.parse(json['lastFinish']),
-        exp = json['exp'] ?? 5;
+        difficulty = json['difficulty'] == null
+            ? Difficulty.easy
+            : TaskUtil.getDifficulty(json['difficulty']);
 }

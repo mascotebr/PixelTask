@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
+import 'package:pixel_tasks/model/Difficulty.dart';
+import 'package:pixel_tasks/utils/task_util.dart';
 
-Future<void> showDialogTask(
-    BuildContext contextMain, Function createTask, Task? task) async {
+Future<void> showDialogTask(BuildContext contextMain, Function createTask,
+    Function editTask, Task? task) async {
   task ??= Task();
   TextEditingController dateController =
       TextEditingController(text: DateFormat('MM/dd/yyyy').format(task.date!));
+  final _formKey = GlobalKey<FormState>();
 
   return showDialog<void>(
     context: contextMain,
@@ -23,6 +26,7 @@ Future<void> showDialogTask(
           backgroundColor: const Color(0xff3B4254),
           content: SingleChildScrollView(
             child: Form(
+              key: _formKey,
               child: ListBody(
                 children: <Widget>[
                   TextFormField(
@@ -30,22 +34,34 @@ Future<void> showDialogTask(
                     textInputAction: TextInputAction.next,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                        labelText: 'Title',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(width: 2, color: Colors.white10),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(width: 2, color: Colors.white54),
-                          borderRadius: BorderRadius.circular(15),
-                        )),
+                      labelText: 'Title',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.white10),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.white54),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.red),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      errorStyle: const TextStyle(color: Colors.red),
+                    ),
                     onChanged: (title) {
                       task!.title = title;
                     },
-                    validator: (title) {},
+                    validator: (title) {
+                      if (title == null || title.isEmpty || title.length < 3) {
+                        return "Greater than 3 characters";
+                      }
+                      return null;
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -69,6 +85,34 @@ Future<void> showDialogTask(
                       onChanged: (description) {
                         task!.description = description;
                       },
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 8.0, top: 16),
+                    child: Text(
+                      "Difficulty",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Slider(
+                      value: task.difficulty.index.toDouble() + 1,
+                      min: 1,
+                      max: 3,
+                      divisions: 2,
+                      activeColor: task.difficulty.color,
+                      inactiveColor: Colors.white10,
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            task!.difficulty =
+                                TaskUtil.getDifficultyInt(value.toInt());
+                          },
+                        );
+                      }),
+                  Center(
+                    child: Text(
+                      task.difficulty.string,
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   Row(
@@ -116,7 +160,6 @@ Future<void> showDialogTask(
                         selectDate(contextStf, task!, dateController);
                         setState(() {});
                       },
-                      validator: (title) {},
                     ),
                 ],
               ),
@@ -153,14 +196,19 @@ Future<void> showDialogTask(
                   },
                 ),
               ),
-              child: const Text(
-                'Create',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                task.key == "" ? 'Create' : "Edit",
+                style: const TextStyle(color: Colors.white),
               ),
               onPressed: () {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                }
                 if (task!.key == "") {
                   task.key = UniqueKey().toString();
                   createTask(task);
+                } else {
+                  editTask(task);
                 }
                 setState(() {});
                 Navigator.of(context).pop();
