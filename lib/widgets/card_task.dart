@@ -83,7 +83,7 @@ class _CardTaskState extends State<CardTask> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  DateFormat('dd/MM/yyyy').format(widget.task.date!),
+                  DateFormat('MM/dd/yyyy').format(widget.task.date!),
                   textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                   style: const TextStyle(color: Colors.white),
                 ),

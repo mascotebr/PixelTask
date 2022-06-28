@@ -252,7 +252,9 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   borderRadius: BorderRadius.circular(15),
                                 )),
                             onChanged: (name) {
-                              CharUtil.char.name = name.trim();
+                              setState(() {
+                                CharUtil.char.name = name.trim();
+                              });
                             },
                             validator: (name) {},
                           ),
@@ -376,7 +378,6 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 ),
                                 onPressed: () async {
                                   await CharUtil.writeChar(CharUtil.char);
-                                  setState(() {});
                                 },
                               ),
                             ),

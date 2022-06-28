@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
 
 Future<void> showDialogTask(
-    BuildContext contextMain, Function createTask) async {
-  Task task = Task();
-  TextEditingController dateController = TextEditingController();
+    BuildContext contextMain, Function createTask, Task? task) async {
+  task ??= Task();
+  TextEditingController dateController =
+      TextEditingController(text: DateFormat('MM/dd/yyyy').format(task.date!));
 
   return showDialog<void>(
     context: contextMain,
@@ -14,9 +15,10 @@ Future<void> showDialogTask(
       return StatefulBuilder(builder: (BuildContext contextStf, setState) {
         return AlertDialog(
           elevation: 8,
-          title: const Text(
-            'New Task',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          title: Text(
+            task!.key == '' ? 'New Task' : 'Edit Task',
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
           backgroundColor: const Color(0xff3B4254),
           content: SingleChildScrollView(
@@ -24,6 +26,7 @@ Future<void> showDialogTask(
               child: ListBody(
                 children: <Widget>[
                   TextFormField(
+                    initialValue: task.title,
                     textInputAction: TextInputAction.next,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -40,13 +43,14 @@ Future<void> showDialogTask(
                           borderRadius: BorderRadius.circular(15),
                         )),
                     onChanged: (title) {
-                      task.title = title;
+                      task!.title = title;
                     },
                     validator: (title) {},
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: TextFormField(
+                      initialValue: task.description,
                       textInputAction: TextInputAction.next,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -63,7 +67,7 @@ Future<void> showDialogTask(
                             borderRadius: BorderRadius.circular(15),
                           )),
                       onChanged: (description) {
-                        task.description = description;
+                        task!.description = description;
                       },
                     ),
                   ),
@@ -79,7 +83,7 @@ Future<void> showDialogTask(
                         ),
                         onChanged: (value) {
                           setState(() {
-                            task.isDairy = value!;
+                            task!.isDairy = value!;
                           });
                         },
                       ),
@@ -109,7 +113,8 @@ Future<void> showDialogTask(
                           )),
                       onTap: () {
                         FocusScope.of(contextStf).unfocus();
-                        selectDate(contextStf, task, dateController);
+                        selectDate(contextStf, task!, dateController);
+                        setState(() {});
                       },
                       validator: (title) {},
                     ),
@@ -153,8 +158,11 @@ Future<void> showDialogTask(
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
-                task.key = UniqueKey().toString();
-                createTask(task);
+                if (task!.key == "") {
+                  task.key = UniqueKey().toString();
+                  createTask(task);
+                }
+                setState(() {});
                 Navigator.of(context).pop();
               },
             ),

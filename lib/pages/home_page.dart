@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/class_char.dart';
@@ -104,7 +106,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               )),
             ]),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => showDialogTask(context, _onCreateTask),
+              onPressed: () => showDialogTask(context, _onCreateTask, null),
               tooltip: 'New Task',
               backgroundColor: Color(CharUtil.char.color),
               child: const Icon(Icons.add),
@@ -267,6 +269,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           taskSelected = task;
         });
+
+        if (Platform.isAndroid) showDialogTask(context, _onCreateTask, task);
+        setState(() {});
       },
     );
   }
