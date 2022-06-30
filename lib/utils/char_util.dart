@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pixel_tasks/model/achievements.dart';
+import 'package:pixel_tasks/model/task.dart';
+import 'package:pixel_tasks/utils/task_util.dart';
 
 import '../model/char.dart';
 import '../model/class_char.dart';
 
 class CharUtil {
   static Char char = Char();
+  static List<Achievements> achievements = <Achievements>[];
 
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -82,6 +83,83 @@ class CharUtil {
     }
 
     return ClassChar.warrior;
+  }
+
+  static void getAchivements() {
+    achievements = <Achievements>[];
+    achievements.add(Achievements(
+        name3: "Level 5",
+        name2: "Level 10",
+        name1: "Level 15",
+        description: ""));
+    achievements.add(Achievements(
+        name3: "30 days", name2: "60 days", name1: "90 days", description: ""));
+    achievements.add(Achievements(
+        name3: "100 Tasks",
+        name2: "200 Tasks",
+        name1: "500 Tasks",
+        description: ""));
+  }
+
+  static Future<void> checkAchivements() async {
+    getAchivements();
+    char.achievements = <Achievements>[];
+
+    //Level 5
+    if (char.level >= 5) {
+      achievements[0].medal = 3;
+      //Level 10
+      if (char.level >= 10) {
+        achievements[0].medal = 2;
+        //Level 15
+        if (char.level >= 15) {
+          achievements[0].medal = 1;
+        }
+      }
+      char.achievements.add(achievements[0]);
+    }
+
+    List<Task> tasksFinished = <Task>[];
+    List<Task> tasks = await TaskUtil.readTasksFinished();
+
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i].isDairy) {
+        int repeat = tasks.where((t) => t.key == tasks[i].key).length;
+        tasks[i].repeat = repeat;
+        tasksFinished.add(tasks[i]);
+        tasks.removeWhere((t) => t.key == tasks[i].key);
+      }
+    }
+
+    //1 Month Tasks Daily
+    if (tasksFinished.where((t) => t.repeat > 30).isNotEmpty) {
+      achievements[1].medal = 3;
+      //2 Month Tasks Daily
+      if (tasksFinished.where((t) => t.repeat > 60).isNotEmpty) {
+        achievements[1].medal = 2;
+        //3 Month Tasks Daily
+        if (tasksFinished.where((t) => t.repeat > 90).isNotEmpty) {
+          achievements[1].medal = 1;
+        }
+      }
+      char.achievements.add(achievements[1]);
+    }
+
+    //100 Tasks writes
+    if (tasksFinished.length >= 100) {
+      achievements[2].medal = 3;
+      if (tasksFinished.length >= 200) {
+        //200 Tasks writes
+        achievements[2].medal = 2;
+        //300 Tasks writes
+        if (tasksFinished.length >= 500) {
+          achievements[2].medal = 1;
+        }
+      }
+      char.achievements.add(achievements[2]);
+    }
+
+    await setChar();
   }
 
   static Widget pixelChar(

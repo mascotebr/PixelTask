@@ -55,22 +55,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _onFinishTask(Task task) async {
-    if (CharUtil.char.exp + task.difficulty.exp >= CharUtil.maxExp) {
-      showDialogLevelUp(context, task.difficulty.exp);
-    } else {
-      showDialogExp(context, task.difficulty.exp);
-    }
-
-    await TaskUtil.writeTaskFinish(task);
-
     double exp = 0;
 
-    if (!task.isDairy &&
-        DateTime.now().isBefore(task.date!.add(const Duration(days: 1)))) {
+    if (!task.isDairy && DateTime.now().isBefore(task.date!)) {
       exp = task.difficulty.exp / 2;
     } else {
       exp = task.difficulty.exp;
     }
+
+    if (CharUtil.char.exp + exp >= CharUtil.maxExp) {
+      showDialogLevelUp(context, exp);
+    } else {
+      showDialogExp(context, exp);
+    }
+
+    await TaskUtil.writeTaskFinish(task);
 
     await CharUtil.addExp(exp);
     await readAllTasks();

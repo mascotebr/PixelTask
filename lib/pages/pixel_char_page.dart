@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/model/char.dart';
 import 'package:pixel_tasks/model/class_char.dart';
+import 'package:pixel_tasks/pages/achievements_page.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 import '../utils/bodys_util.dart';
 import '../utils/navigation_util.dart';
@@ -24,7 +25,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
   }
 
   Future<void> readChar() async {
-    await CharUtil.setChar();
+    await CharUtil.checkAchivements();
     charInitial = CharUtil.char;
     setState(() {});
   }
@@ -45,8 +46,33 @@ class _PixelCharPageState extends State<PixelCharPage> {
                 child: Form(
                   child: ListBody(
                     children: <Widget>[
-                      SizedBox(
-                        height: 300,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          child: Image.asset(
+                            "images/medals/medal1.png",
+                            scale: 1,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (c, a1, a2) =>
+                                    const AchievementsPage(
+                                  title: 'Achievements',
+                                ),
+                                transitionsBuilder: (c, anim, a2, child) =>
+                                    FadeTransition(opacity: anim, child: child),
+                                transitionDuration:
+                                    const Duration(milliseconds: 300),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        height: 200,
+                        margin: const EdgeInsets.only(bottom: 16.0),
                         child: Image.asset(
                           CharUtil.char.classChar.image,
                         ),

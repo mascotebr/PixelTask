@@ -28,5 +28,7 @@ class Char {
         color = json['color'] ?? 0xFF2196F3,
         exp = json['exp'] ?? 0,
         level = json['level'] ?? 1,
-        achievements = List<Achievements>.from(json['achievements']);
+        achievements = json['achievements'] == null
+            ? <Achievements>[]
+            : List<Achievements>.from(json['achievements']);
 }

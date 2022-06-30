@@ -99,8 +99,7 @@ class _CardTaskState extends State<CardTask> {
                   DateFormat('MM/dd/yyyy').format(widget.task.date!),
                   textScaleFactor: Platform.isAndroid ? 1 : 0.8,
                   style: TextStyle(
-                      color: DateTime.now().isBefore(
-                              widget.task.date!.add(const Duration(days: 1)))
+                      color: DateTime.now().isAfter(widget.task.date!)
                           ? Colors.white
                           : Colors.red.shade300),
                 ),

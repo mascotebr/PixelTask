@@ -9,7 +9,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
   task ??= Task();
   TextEditingController dateController =
       TextEditingController(text: DateFormat('MM/dd/yyyy').format(task.date!));
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   return showDialog<void>(
     context: contextMain,
@@ -26,7 +26,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
           backgroundColor: const Color(0xff3B4254),
           content: SingleChildScrollView(
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: ListBody(
                 children: <Widget>[
                   TextFormField(
@@ -201,7 +201,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
                 style: const TextStyle(color: Colors.white),
               ),
               onPressed: () {
-                if (!_formKey.currentState!.validate()) {
+                if (!formKey.currentState!.validate()) {
                   return;
                 }
                 if (task!.key == "") {
