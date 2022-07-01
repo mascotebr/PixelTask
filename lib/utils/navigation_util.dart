@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/pages/achievements_page.dart';
 import 'package:pixel_tasks/pages/archive_page.dart';
 import 'package:pixel_tasks/pages/home_page.dart';
 import 'package:pixel_tasks/pages/pixel_char_page.dart';
@@ -95,7 +96,29 @@ class NavigationUtil {
           onTap: () {
             onItemTapped(2, context);
           },
-        )
+        ),
+        InkWell(
+          child: ListTile(
+            leading: Image.asset(
+              "images/medals/medal1.png",
+              scale: 2.5,
+            ),
+            iconColor: selectedIndex == 3
+                ? Colors.white
+                : Colors.black.withOpacity(0.75),
+            minLeadingWidth: 16,
+            title: Text(
+              "Achievements",
+              style: TextStyle(
+                  color: selectedIndex == 3
+                      ? Colors.white
+                      : Colors.black.withOpacity(0.75)),
+            ),
+          ),
+          onTap: () {
+            onItemTapped(3, context);
+          },
+        ),
       ],
     );
   }
@@ -134,6 +157,19 @@ class NavigationUtil {
           PageRouteBuilder(
             pageBuilder: (c, a1, a2) => const ArchivePage(
               title: 'Completed Tasks',
+            ),
+            transitionsBuilder: (c, anim, a2, child) =>
+                FadeTransition(opacity: anim, child: child),
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => const AchievementsPage(
+              title: 'Achievements',
             ),
             transitionsBuilder: (c, anim, a2, child) =>
                 FadeTransition(opacity: anim, child: child),

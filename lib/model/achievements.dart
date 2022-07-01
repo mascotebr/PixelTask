@@ -1,8 +1,9 @@
 class Achievements {
-  String? name3 = "";
-  String? name2 = "";
-  String? name1 = "";
-  String? description = "";
+  String? name = "";
+  String? description3 = "";
+  String? description2 = "";
+  String? description1 = "";
   int? medal = 0;
-  Achievements({this.name3, this.name2, this.name1, this.description});
+  Achievements(
+      {this.name, this.description3, this.description2, this.description1});
 }

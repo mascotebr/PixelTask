@@ -88,17 +88,22 @@ class CharUtil {
   static void getAchivements() {
     achievements = <Achievements>[];
     achievements.add(Achievements(
-        name3: "Level 5",
-        name2: "Level 10",
-        name1: "Level 15",
-        description: ""));
+        name: "E X P E R T",
+        description3: "Reach Level 5",
+        description2: "Reach Level 10",
+        description1: "Reach Level 15"));
     achievements.add(Achievements(
-        name3: "30 days", name2: "60 days", name1: "90 days", description: ""));
+      name: "SUN WORKER",
+      description3: "Complete for 30 days a daily task",
+      description2: "Complete for 60 days a daily task",
+      description1: "Complete for 90 days a daily task",
+    ));
     achievements.add(Achievements(
-        name3: "100 Tasks",
-        name2: "200 Tasks",
-        name1: "500 Tasks",
-        description: ""));
+      name: "MASTER WRITER",
+      description3: "Complete 100 Tasks",
+      description2: "Complete 200 Tasks",
+      description1: "Complete 500 Tasks",
+    ));
   }
 
   static Future<void> checkAchivements() async {
@@ -106,7 +111,7 @@ class CharUtil {
     char.achievements = <Achievements>[];
 
     //Level 5
-    if (char.level >= 5) {
+    if (char.level >= 2) {
       achievements[0].medal = 3;
       //Level 10
       if (char.level >= 10) {

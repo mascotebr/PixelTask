@@ -25,7 +25,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
   }
 
   Future<void> readChar() async {
-    await CharUtil.checkAchivements();
+    await CharUtil.setChar();
     charInitial = CharUtil.char;
     setState(() {});
   }
