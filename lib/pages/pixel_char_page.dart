@@ -215,7 +215,10 @@ class _PixelCharPageState extends State<PixelCharPage> {
                             onPressed: () async {
                               await CharUtil.writeChar(CharUtil.char);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Saved')),
+                                const SnackBar(
+                                  content: Text('Saved'),
+                                  duration: Duration(seconds: 2),
+                                ),
                               );
                               setState(() {});
                             },
@@ -406,7 +409,10 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 onPressed: () async {
                                   await CharUtil.writeChar(CharUtil.char);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Saved')),
+                                    const SnackBar(
+                                      content: Text('Saved'),
+                                      duration: Duration(seconds: 2),
+                                    ),
                                   );
                                 },
                               ),

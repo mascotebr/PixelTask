@@ -30,5 +30,6 @@ class Char {
         level = json['level'] ?? 1,
         achievements = json['achievements'] == null
             ? <Achievements>[]
-            : List<Achievements>.from(json['achievements']);
+            : List<Achievements>.from(json['achievements']
+                .map((model) => Achievements.fromJson(model)));
 }

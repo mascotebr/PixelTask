@@ -106,12 +106,13 @@ class CharUtil {
     ));
   }
 
-  static Future<void> checkAchivements() async {
+  static Future<List<Achievements>> checkAchivements() async {
     getAchivements();
+    List<Achievements> actualAchievements = char.achievements;
     char.achievements = <Achievements>[];
 
     //Level 5
-    if (char.level >= 2) {
+    if (char.level >= 5) {
       achievements[0].medal = 3;
       //Level 10
       if (char.level >= 10) {
@@ -164,7 +165,28 @@ class CharUtil {
       char.achievements.add(achievements[2]);
     }
 
-    await setChar();
+    List<Achievements> newAchievements = <Achievements>[];
+
+    for (var a in char.achievements) {
+      //Add a new achievement
+      List<Achievements> aux =
+          actualAchievements.where((act) => a.name == act.name).toList();
+
+      if (aux.isEmpty) {
+        newAchievements.add(a);
+      } else {
+        //Add change medal
+        aux = actualAchievements
+            .where((act) => a.name == act.name && a.medal != act.medal)
+            .toList();
+        if (aux.isNotEmpty) {
+          newAchievements.add(aux.first);
+        }
+      }
+    }
+    await writeChar(char);
+
+    return newAchievements;
   }
 
   static Widget pixelChar(
@@ -231,5 +253,30 @@ class CharUtil {
         )
       ],
     );
+  }
+
+  static Widget medalImage(int medal) {
+    switch (medal) {
+      case 1:
+        return Image.asset(
+          'images/medals/medal1.png',
+        );
+
+      case 2:
+        return Image.asset(
+          'images/medals/medal2.png',
+        );
+
+      case 3:
+        return Image.asset(
+          'images/medals/medal3.png',
+        );
+      default:
+        return Opacity(
+            opacity: 0.5,
+            child: Image.asset(
+              'images/medals/nomedal.png',
+            ));
+    }
   }
 }
