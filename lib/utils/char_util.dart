@@ -27,7 +27,7 @@ class CharUtil {
   static Future<void> writeChar(Char char) async {
     final file = await _localFile;
     String json = jsonEncode(char);
-    file.writeAsString(json);
+    await file.writeAsString(json);
     await setChar();
   }
 
@@ -80,6 +80,12 @@ class CharUtil {
         return ClassChar.mage;
       case "ClassChar.archer":
         return ClassChar.archer;
+      case "ClassChar.liver":
+        return ClassChar.liver;
+      case "ClassChar.pencilMaster":
+        return ClassChar.pencilMaster;
+      case "ClassChar.sunWorker":
+        return ClassChar.sunWorker;
     }
 
     return ClassChar.warrior;

@@ -137,11 +137,12 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   ),
                                   onChanged: (ClassChar? newValue) {
                                     setState(() {
-                                      CharUtil.char.classChar = ClassChar.values
+                                      CharUtil.char.classChar = CharUtil
+                                          .char.classChar.listValues
                                           .firstWhere((e) => e == newValue);
                                     });
                                   },
-                                  items: ClassChar.values
+                                  items: CharUtil.char.classChar.listValues
                                       .map<DropdownMenuItem<ClassChar>>(
                                           (ClassChar value) {
                                     return DropdownMenuItem<ClassChar>(
@@ -330,12 +331,12 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                       ),
                                       onChanged: (ClassChar? newValue) {
                                         setState(() {
-                                          CharUtil.char.classChar = ClassChar
-                                              .values
+                                          CharUtil.char.classChar = CharUtil
+                                              .char.classChar.listValues
                                               .firstWhere((e) => e == newValue);
                                         });
                                       },
-                                      items: ClassChar.values
+                                      items: CharUtil.char.classChar.listValues
                                           .map<DropdownMenuItem<ClassChar>>(
                                               (ClassChar value) {
                                         return DropdownMenuItem<ClassChar>(

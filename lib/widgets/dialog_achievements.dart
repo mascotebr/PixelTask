@@ -18,14 +18,11 @@ Future<void> showDialogAchievement(
 }
 
 Widget dialogAchiement(BuildContext context, Achievements achievement) {
-  Future.delayed(const Duration(milliseconds: 3000), () {
-    Navigator.pop(context);
-  });
   return AlertDialog(
       elevation: 8,
       backgroundColor: const Color(0xff3B4254),
       content: SizedBox(
-        height: 100,
+        height: 200,
         width: 100,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -39,7 +36,31 @@ Widget dialogAchiement(BuildContext context, Achievements achievement) {
                 Text(
                   achievement.name!,
                   style: const TextStyle(color: Colors.white, fontSize: 24),
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return Colors.black.withOpacity(0.5);
+                          }
+                          return const Color.fromARGB(
+                              255, 38, 44, 58); // Use the component's default.
+                        },
+                      ),
+                    ),
+                    child: const Text(
+                      'Close',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
               ],
             ),
           ],

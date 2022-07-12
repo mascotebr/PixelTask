@@ -68,6 +68,9 @@ flutter:
     - images/warrior.png
     - images/thief.png
     - images/archer.png
+    - images/liver.png
+    - images/pencil-master.png
+    - images/sun-worker.png
     - images/medals/nomedal.png
     - images/medals/medal1.png
     - images/medals/medal2.png
