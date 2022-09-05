@@ -16,8 +16,7 @@ import '../widgets/dialog_achievements.dart';
 import '../widgets/dialog_splash.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -129,12 +128,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         Scaffold(
             backgroundColor: const Color(0xff3B4254),
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("Pixel Tasks"),
               backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+              toolbarHeight: 0,
             ),
             body: CustomScrollView(slivers: [
               SliverAppBar(
-                  expandedHeight: 300.0,
+                  expandedHeight: 340.0,
                   backgroundColor: Color(CharUtil.char.color).withAlpha(25),
                   flexibleSpace: FlexibleSpaceBar(
                       background: CharUtil.pixelChar(context, 0, 1))),

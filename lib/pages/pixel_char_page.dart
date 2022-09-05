@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pixel_tasks/model/char.dart';
 import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/pages/achievements_page.dart';
+import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
+import 'package:provider/provider.dart';
 import '../utils/bodys_util.dart';
 import '../utils/navigation_util.dart';
 import '../widgets/dialog_color.dart';
@@ -226,6 +228,27 @@ class _PixelCharPageState extends State<PixelCharPage> {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24.0),
+                        child: OutlinedButton(
+                            onPressed: () {
+                              context.read<AuthService>().logout();
+                            },
+                            style:
+                                OutlinedButton.styleFrom(primary: Colors.red),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Text(
+                                    "Logout",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                )
+                              ],
+                            )),
+                      )
                     ],
                   ),
                 ),

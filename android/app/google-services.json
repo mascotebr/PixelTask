@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1072338968606",
+    "project_id": "pixel-tasks-d8cd1",
+    "storage_bucket": "pixel-tasks-d8cd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072338968606:android:3661352df48f473fb84e0f",
+        "android_client_info": {
+          "package_name": "com.example.pixel_tasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1072338968606-fi0du832c0mof2m7re1veeb46gqdoija.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_wLH9t9IY9p8wWwrB2YkN8VBD99oYf2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1072338968606-fi0du832c0mof2m7re1veeb46gqdoija.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
