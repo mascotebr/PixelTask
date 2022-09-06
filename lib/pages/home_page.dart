@@ -5,12 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/model/achievements.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
-import 'package:pixel_tasks/utils/help_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
+import 'package:provider/provider.dart';
 import '../model/task.dart';
+import '../services/task_repository.dart';
+import '../utils/help_util.dart';
 import '../utils/task_util.dart';
 import '../widgets/dialog_achievements.dart';
 import '../widgets/dialog_splash.dart';
@@ -26,14 +28,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     readAllTasks();
-
     super.initState();
   }
 
-  List<Task> tasks = <Task>[];
-  List<Task> tasksDaily = <Task>[];
-  List<Task> tasksNotDaily = <Task>[];
-  List<Task> tasksFinished = <Task>[];
+  late TaskRepository tasks;
 
   TextEditingController taskController = TextEditingController(text: "");
   TextEditingController dateController = TextEditingController();
@@ -43,22 +41,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _formKeyTask = GlobalKey<FormState>();
 
-  Future<void> _onCreateTask(Task task) async {
-    await TaskUtil.writeTask(task);
-    await readAllTasks();
-    setState(() {});
+  void _onCreateTask(Task task) {
+    tasks.save(task);
   }
 
   Future<void> _onEditTask(Task task) async {
-    await TaskUtil.editTask(task);
+    tasks.save(task);
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Task Edited'),
         duration: Duration(seconds: 2),
       ),
     );
-    await readAllTasks();
-    setState(() {});
   }
 
   Future<void> _onFinishTask(Task task) async {
@@ -93,15 +88,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> readAllTasks() async {
     await CharUtil.setChar();
 
-    tasks = await TaskUtil.readTasks();
-    tasksNotDaily = tasks.where((t) => !t.isDairy).toList();
-    tasksDaily = tasks.where((t) => t.isDairy).toList();
-
-    tasks = <Task>[];
-    tasks.addAll(tasksDaily);
-    tasks.addAll(tasksNotDaily);
-
-    tasksFinished = await TaskUtil.readTasksFinished();
+    // tasksFinished = await TaskUtil.readTasksFinished();
 
     setState(() {});
 
@@ -122,6 +109,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Task task = Task();
+    tasks = context.watch<TaskRepository>();
 
     return BodysUtil.bodyResponsiveHome(
         context,
@@ -132,20 +120,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               backgroundColor: const Color.fromARGB(255, 38, 44, 58),
               toolbarHeight: 0,
             ),
-            body: CustomScrollView(slivers: [
-              SliverAppBar(
-                  expandedHeight: 340.0,
-                  backgroundColor: Color(CharUtil.char.color).withAlpha(25),
-                  flexibleSpace: FlexibleSpaceBar(
-                      background: CharUtil.pixelChar(context, 0, 1))),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return taskItem(context, index, false);
-                },
-                childCount: tasks.isEmpty ? 1 : tasks.length,
-              )),
-            ]),
+            body: Consumer<TaskRepository>(builder: (context, ts, child) {
+              return CustomScrollView(slivers: [
+                SliverAppBar(
+                    expandedHeight: 340.0,
+                    backgroundColor: Color(CharUtil.char.color).withAlpha(25),
+                    flexibleSpace: FlexibleSpaceBar(
+                        background: CharUtil.pixelChar(context, 0, 1))),
+                SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return taskItem(context, index, ts.list, false);
+                  },
+                  childCount: ts.list.isEmpty ? 1 : ts.list.length,
+                )),
+              ]);
+            }),
             floatingActionButton: FloatingActionButton(
               onPressed: () =>
                   showDialogTask(context, _onCreateTask, _onEditTask, null),
@@ -185,89 +175,92 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: Padding(
                     padding: const EdgeInsets.only(
                         left: 24.0, right: 24.0, top: 16.0),
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              for (int index = 0;
-                                  index < tasks.length ||
-                                      (tasks.isEmpty && index == 0);
-                                  index++)
-                                taskItem(context, index, true),
-                            ],
+                    child:
+                        Consumer<TaskRepository>(builder: (context, ts, child) {
+                      return Stack(
+                        children: [
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                for (int index = 0;
+                                    index < tasks.list.length ||
+                                        (tasks.list.isEmpty && index == 0);
+                                    index++)
+                                  taskItem(context, index, ts.list, true),
+                              ],
+                            ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Card(
-                              elevation: 8,
-                              color: Colors.transparent,
-                              child: Form(
-                                key: _formKeyTask,
-                                child: TextFormField(
-                                  controller: taskController,
-                                  textInputAction: TextInputAction.next,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                      Icons.add,
-                                      color: Colors.white,
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Card(
+                                elevation: 8,
+                                color: Colors.transparent,
+                                child: Form(
+                                  key: _formKeyTask,
+                                  child: TextFormField(
+                                    controller: taskController,
+                                    textInputAction: TextInputAction.next,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                      filled: true,
+                                      fillColor: const Color(0xff3B4254),
+                                      labelText: 'New Task',
+                                      labelStyle:
+                                          const TextStyle(color: Colors.white),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.white10),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.white54),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            width: 2, color: Colors.red),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      errorStyle:
+                                          const TextStyle(color: Colors.red),
                                     ),
-                                    filled: true,
-                                    fillColor: const Color(0xff3B4254),
-                                    labelText: 'New Task',
-                                    labelStyle:
-                                        const TextStyle(color: Colors.white),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 2, color: Colors.white10),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 2, color: Colors.white54),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          width: 2, color: Colors.red),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    errorStyle:
-                                        const TextStyle(color: Colors.red),
+                                    onChanged: (title) {
+                                      task.title = title;
+                                    },
+                                    validator: (title) {
+                                      if (title == null ||
+                                          title.isEmpty ||
+                                          title.length < 3) {
+                                        return "Greater than 3 characters";
+                                      }
+                                      return null;
+                                    },
+                                    onEditingComplete: () {
+                                      if (!_formKeyTask.currentState!
+                                          .validate()) {
+                                        return;
+                                      }
+                                      FocusScope.of(context).unfocus();
+                                      taskController.text = "";
+                                      task.key = UniqueKey().toString();
+                                      task.date = DateTime.now();
+                                      _onCreateTask(task);
+                                    },
                                   ),
-                                  onChanged: (title) {
-                                    task.title = title;
-                                  },
-                                  validator: (title) {
-                                    if (title == null ||
-                                        title.isEmpty ||
-                                        title.length < 3) {
-                                      return "Greater than 3 characters";
-                                    }
-                                    return null;
-                                  },
-                                  onEditingComplete: () {
-                                    if (!_formKeyTask.currentState!
-                                        .validate()) {
-                                      return;
-                                    }
-                                    FocusScope.of(context).unfocus();
-                                    taskController.text = "";
-                                    task.key = UniqueKey().toString();
-                                    task.date = DateTime.now();
-                                    _onCreateTask(task);
-                                  },
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
+                          )
+                        ],
+                      );
+                    }),
                   ),
                 ),
                 editTaskDesktop(context, taskSelected),
@@ -373,7 +366,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ));
   }
 
-  Widget taskItem(BuildContext context, int index, bool windows) {
+  Widget taskItem(
+      BuildContext context, int index, List<Task> tasks, bool windows) {
     return ListBody(
       children: [
         if (index == 0)
@@ -414,7 +408,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             !HelpUtil.isToday(tasks[index].lastFinish) &&
             tasks[index].isDairy)
           cardDismissible(tasks[index], true),
-        if (tasks.isNotEmpty && index == tasksDaily.length && index > 0)
+        if (tasks.isNotEmpty &&
+            index == tasks.where((t) => t.isDairy).length &&
+            index > 0)
           divider(),
         if (tasks.isNotEmpty && !tasks[index].isDairy)
           cardDismissible(tasks[index], false),

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/firebase_options.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
+import 'package:pixel_tasks/services/task_repository.dart';
 import 'package:pixel_tasks/widgets/auh_check.dart';
 import 'package:provider/provider.dart';
 
@@ -13,10 +14,14 @@ Future<void> main() async {
   );
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthService(),
-      child: const MyApp(),
-    ),
+    MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => AuthService()),
+      ChangeNotifierProvider(
+        create: (context) => TaskRepository(
+          auth: context.read<AuthService>(),
+        ),
+      ),
+    ], child: const MyApp()),
   );
 }
 
