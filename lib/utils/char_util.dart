@@ -135,7 +135,7 @@ class CharUtil {
     List<Task> tasks = await TaskUtil.readTasksFinished();
 
     for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i].isDairy) {
+      if (tasks[i].isDaily) {
         int repeat = tasks.where((t) => t.key == tasks[i].key).length;
         tasks[i].repeat = repeat;
         tasksFinished.add(tasks[i]);

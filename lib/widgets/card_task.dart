@@ -83,7 +83,7 @@ class _CardTaskState extends State<CardTask> {
                   ),
                 ),
               ),
-            if (widget.task.isDairy)
+            if (widget.task.isDaily)
               Align(
                   alignment: Alignment.topRight,
                   child: Icon(Icons.repeat,
@@ -92,7 +92,7 @@ class _CardTaskState extends State<CardTask> {
                           : HelpUtil.isToday(widget.task.lastFinish)
                               ? Colors.yellow
                               : Colors.grey)),
-            if (!widget.task.isDairy)
+            if (!widget.task.isDaily)
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(

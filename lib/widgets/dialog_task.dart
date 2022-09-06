@@ -118,7 +118,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
                   Row(
                     children: [
                       Checkbox(
-                        value: task.isDairy,
+                        value: task.isDaily,
                         fillColor: MaterialStateProperty.resolveWith<Color?>(
                           (Set<MaterialState> states) {
                             return Colors
@@ -127,7 +127,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
                         ),
                         onChanged: (value) {
                           setState(() {
-                            task!.isDairy = value!;
+                            task!.isDaily = value!;
                           });
                         },
                       ),
@@ -137,7 +137,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
                       ),
                     ],
                   ),
-                  if (!task.isDairy)
+                  if (!task.isDaily)
                     TextFormField(
                       controller: dateController,
                       textInputAction: TextInputAction.next,

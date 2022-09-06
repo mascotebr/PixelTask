@@ -4,12 +4,12 @@ import 'package:pixel_tasks/model/task.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/utils/dbfirestore_util.dart';
 
-class TaskRepository extends ChangeNotifier {
+class TaskFinishedRepository extends ChangeNotifier {
   final List<Task> list = [];
   late FirebaseFirestore db;
   late AuthService auth;
 
-  TaskRepository({required this.auth}) {
+  TaskFinishedRepository({required this.auth}) {
     _startRepository();
   }
 
@@ -25,7 +25,7 @@ class TaskRepository extends ChangeNotifier {
   _readTasks() async {
     if (auth.userA != null && list.isEmpty) {
       final snapshot =
-          await db.collection('users/${auth.userA!.uid}/tasks').get();
+          await db.collection('users/${auth.userA!.uid}/tasksFinished').get();
       list.addAll(
           snapshot.docs.map((doc) => Task.fromJson(doc.data())).toList());
       notifyListeners();
@@ -46,7 +46,7 @@ class TaskRepository extends ChangeNotifier {
       list.add(task);
     }
 
-    db.collection("users/${auth.userA!.uid}/tasks").doc(task.key).set({
+    db.collection("users/${auth.userA!.uid}/tasksFinished").doc(task.key).set({
       'key': task.key,
       'title': task.title,
       'description': task.description,
@@ -64,7 +64,10 @@ class TaskRepository extends ChangeNotifier {
     tasks.forEach((task) async {
       if (!list.any((atual) => atual.key == task.key)) {
         list.add(task);
-        db.collection("users/${auth.userA!.uid}/tasks").doc(task.key).set({
+        db
+            .collection("users/${auth.userA!.uid}/tasksFinished")
+            .doc(task.key)
+            .set({
           'key': task.key,
           'title': task.title,
           'description': task.description,
@@ -81,10 +84,23 @@ class TaskRepository extends ChangeNotifier {
 
   remove(Task task) async {
     await db
-        .collection('users/${auth.userA!.uid}/tasks')
+        .collection('users/${auth.userA!.uid}/tasksFinished')
         .doc(task.key)
         .delete();
     list.remove(task);
     notifyListeners();
+  }
+
+  order() {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].isDaily) {
+        int repeat = list.where((t) => t.key == list[i].key).length;
+        list[i].repeat = repeat;
+        list.add(list[i]);
+        list.removeWhere((t) => t.key == list[i].key);
+      } else {
+        list.add(list[i]);
+      }
+    }
   }
 }

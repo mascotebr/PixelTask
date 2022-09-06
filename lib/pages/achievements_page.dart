@@ -4,9 +4,8 @@ import '../utils/bodys_util.dart';
 import '../utils/char_util.dart';
 
 class AchievementsPage extends StatefulWidget {
-  const AchievementsPage({super.key, this.title});
-  // ignore: prefer_typing_uninitialized_variables
-  final title;
+  const AchievementsPage({super.key});
+
   @override
   State<AchievementsPage> createState() => _AchievementsPageState();
 }
@@ -21,7 +20,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       Scaffold(
           backgroundColor: const Color(0xff3B4254),
           appBar: AppBar(
-            title: Text(widget.title),
+            title: const Text("Achievements"),
             backgroundColor: const Color.fromARGB(255, 38, 44, 58),
           ),
           body: FutureBuilder(

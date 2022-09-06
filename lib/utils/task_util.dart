@@ -47,7 +47,7 @@ class TaskUtil {
     tasks[indexFind].lastFinish = DateTime.now();
     task.lastFinish = DateTime.now();
 
-    if (!task.isDairy) tasks.removeAt(indexFind);
+    if (!task.isDaily) tasks.removeAt(indexFind);
 
     String json = jsonEncode(tasks);
     file.writeAsString(json);

@@ -6,7 +6,7 @@ class Task {
   String title = "";
   String? description;
   DateTime? date = DateTime.now();
-  bool isDairy = false;
+  bool isDaily = false;
   DateTime? lastFinish = DateTime.now().add(const Duration(days: -1));
 
   Difficulty difficulty = Difficulty.easy;
@@ -20,7 +20,7 @@ class Task {
         'title': title,
         'description': description,
         'date': date?.toIso8601String(),
-        'isDairy': isDairy,
+        'isDaily': isDaily,
         'lastFinish': lastFinish?.toIso8601String(),
         'difficulty': difficulty.toString(),
       };
@@ -30,7 +30,7 @@ class Task {
         title = json['title'],
         description = json['description'],
         date = DateTime.parse(json['date']),
-        isDairy = json['isDairy'] == "true" ? true : false,
+        isDaily = json['isDaily'],
         lastFinish = DateTime.parse(json['lastFinish']),
         difficulty = json['difficulty'] == null
             ? Difficulty.easy

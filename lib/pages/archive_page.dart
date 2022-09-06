@@ -1,63 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
+import 'package:provider/provider.dart';
 
-import '../model/task.dart';
 import '../utils/navigation_util.dart';
-import '../utils/task_util.dart';
 import '../widgets/card_task.dart';
 
 class ArchivePage extends StatefulWidget {
-  const ArchivePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const ArchivePage({Key? key}) : super(key: key);
 
   @override
   State<ArchivePage> createState() => _ArchivePageState();
 }
 
 class _ArchivePageState extends State<ArchivePage> {
-  @override
-  void initState() {
-    readAllTasks();
-
-    super.initState();
-  }
-
-  List<Task> tasksFinished = <Task>[];
-
-  Future<void> readAllTasks() async {
-    List<Task> tasks = await TaskUtil.readTasksFinished();
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i].isDairy) {
-        int repeat = tasks.where((t) => t.key == tasks[i].key).length;
-        tasks[i].repeat = repeat;
-        tasksFinished.add(tasks[i]);
-        tasks.removeWhere((t) => t.key == tasks[i].key);
-      } else {
-        tasksFinished.add(tasks[i]);
-      }
-    }
-    setState(() {});
-  }
+  late TaskFinishedRepository tasksFinished;
 
   @override
   Widget build(BuildContext context) {
+    tasksFinished = context.watch<TaskFinishedRepository>();
+
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
             backgroundColor: const Color(0xff3B4254),
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("Completed Tasks"),
               backgroundColor: const Color.fromARGB(255, 38, 44, 58),
             ),
-            body: tasksFinished.isNotEmpty
-                ? ListView.builder(
-                    itemCount: tasksFinished.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return CardTask(
-                        task: tasksFinished[index],
-                      );
-                    },
-                  )
+            body: tasksFinished.list.isNotEmpty
+                ? Consumer<TaskFinishedRepository>(
+                    builder: (context, tfs, child) {
+                    return ListView.builder(
+                      itemCount: tfs.list.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return CardTask(
+                          task: tfs.list[index],
+                        );
+                      },
+                    );
+                  })
                 : const Center(
                     child: Text(
                     'No tasks here :(',
@@ -99,26 +81,30 @@ class _ArchivePageState extends State<ArchivePage> {
                       child: Padding(
                         padding: const EdgeInsets.only(
                             top: 24.0, bottom: 16.0, left: 16.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 16.0),
-                              child: Text(
-                                "Completed Tasks",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w900,
+                        child: Consumer<TaskFinishedRepository>(
+                          builder: (context, tfs, child) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 16.0),
+                                  child: Text(
+                                    "Completed Tasks",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            for (int index = 0;
-                                index < tasksFinished.length;
-                                index++)
-                              CardTask(task: tasksFinished[index]),
-                          ],
+                                for (int index = 0;
+                                    index < tfs.list.length;
+                                    index++)
+                                  CardTask(task: tfs.list[index]),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ),

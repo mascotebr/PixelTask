@@ -11,6 +11,7 @@ import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
 import 'package:provider/provider.dart';
 import '../model/task.dart';
+import '../services/task_finished_repository.dart';
 import '../services/task_repository.dart';
 import '../utils/help_util.dart';
 import '../utils/task_util.dart';
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   late TaskRepository tasks;
+  late TaskFinishedRepository tasksFinished;
 
   TextEditingController taskController = TextEditingController(text: "");
   TextEditingController dateController = TextEditingController();
@@ -57,9 +59,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _onFinishTask(Task task) async {
+    setState(() => tasks.list.remove(task));
     double exp = 0;
 
-    if (!task.isDairy &&
+    if (!task.isDaily &&
         DateTime.now().isBefore(task.date!.add(const Duration(days: 1)))) {
       exp = task.difficulty.exp / 2;
     } else {
@@ -72,11 +75,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       showDialogExp(context, exp);
     }
 
-    await TaskUtil.writeTaskFinish(task);
+    task.lastFinish = DateTime.now();
 
-    await CharUtil.addExp(exp);
-    await readAllTasks();
-    setState(() {});
+    if (!task.isDaily) {
+      tasks.remove(task);
+    }
+
+    tasksFinished.save(task);
+
+    CharUtil.addExp(exp);
+    readAllTasks();
+
+    if (task.isDaily) {
+      await Future.delayed(const Duration(seconds: 3), () {
+        tasks.save(task);
+      });
+    }
   }
 
   Future<void> _onDeleteTask(Task task) async {
@@ -110,6 +124,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Task task = Task();
     tasks = context.watch<TaskRepository>();
+    tasksFinished = context.watch<TaskFinishedRepository>();
 
     return BodysUtil.bodyResponsiveHome(
         context,
@@ -402,17 +417,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         if (tasks.isNotEmpty &&
             HelpUtil.isToday(tasks[index].lastFinish) &&
-            tasks[index].isDairy)
+            tasks[index].isDaily)
           cardDismissible(tasks[index], false),
         if (tasks.isNotEmpty &&
             !HelpUtil.isToday(tasks[index].lastFinish) &&
-            tasks[index].isDairy)
+            tasks[index].isDaily)
           cardDismissible(tasks[index], true),
         if (tasks.isNotEmpty &&
-            index == tasks.where((t) => t.isDairy).length &&
+            index == tasks.where((t) => t.isDaily).length &&
             index > 0)
           divider(),
-        if (tasks.isNotEmpty && !tasks[index].isDairy)
+        if (tasks.isNotEmpty && !tasks[index].isDaily)
           cardDismissible(tasks[index], false),
         if (index == tasks.length - 1) const SizedBox(height: 100),
       ],
@@ -564,7 +579,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Row(
                               children: [
                                 Checkbox(
-                                  value: taskEdit.isDairy,
+                                  value: taskEdit.isDaily,
                                   fillColor:
                                       MaterialStateProperty.resolveWith<Color?>(
                                     (Set<MaterialState> states) {
@@ -574,7 +589,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                   onChanged: (value) {
                                     setState(() {
-                                      taskEdit.isDairy = value!;
+                                      taskEdit.isDaily = value!;
                                     });
                                   },
                                 ),
@@ -585,7 +600,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ],
                             ),
                           ),
-                          if (!taskEdit.isDairy)
+                          if (!taskEdit.isDaily)
                             Padding(
                               padding: const EdgeInsets.only(top: 16.0),
                               child: TextFormField(

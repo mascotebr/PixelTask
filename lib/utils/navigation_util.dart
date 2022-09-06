@@ -153,9 +153,7 @@ class NavigationUtil {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => const ArchivePage(
-              title: 'Completed Tasks',
-            ),
+            pageBuilder: (c, a1, a2) => const ArchivePage(),
             transitionsBuilder: (c, anim, a2, child) =>
                 FadeTransition(opacity: anim, child: child),
             transitionDuration: const Duration(milliseconds: 300),
@@ -166,9 +164,7 @@ class NavigationUtil {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => const AchievementsPage(
-              title: 'Achievements',
-            ),
+            pageBuilder: (c, a1, a2) => const AchievementsPage(),
             transitionsBuilder: (c, anim, a2, child) =>
                 FadeTransition(opacity: anim, child: child),
             transitionDuration: const Duration(milliseconds: 300),

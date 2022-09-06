@@ -60,9 +60,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               context,
                               PageRouteBuilder(
                                 pageBuilder: (c, a1, a2) =>
-                                    const AchievementsPage(
-                                  title: 'Achievements',
-                                ),
+                                    const AchievementsPage(),
                                 transitionsBuilder: (c, anim, a2, child) =>
                                     FadeTransition(opacity: anim, child: child),
                                 transitionDuration:
