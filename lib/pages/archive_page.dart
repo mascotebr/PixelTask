@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_tasks/services/char_repository.dart';
 import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:provider/provider.dart';
@@ -15,10 +16,12 @@ class ArchivePage extends StatefulWidget {
 
 class _ArchivePageState extends State<ArchivePage> {
   late TaskFinishedRepository tasksFinished;
+  late CharRepository char;
 
   @override
   Widget build(BuildContext context) {
     tasksFinished = context.watch<TaskFinishedRepository>();
+    char = context.watch<CharRepository>();
 
     return BodysUtil.bodyResponsiveHome(
         context,
@@ -60,7 +63,11 @@ class _ArchivePageState extends State<ArchivePage> {
             ),
             body: Row(
               children: [
-                BodysUtil.navegationDesktop(context, 2),
+                BodysUtil.navegationDesktop(
+                    context,
+                    2,
+                    char.pixelChar(
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
                 Container(
                   margin: const EdgeInsets.only(
                     left: 8.0,

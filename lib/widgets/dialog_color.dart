@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:pixel_tasks/utils/char_util.dart';
 
-Future<void> showDialogColor(BuildContext contextMain) async {
+import '../model/char.dart';
+
+Future<void> showDialogColor(BuildContext contextMain, Char char) async {
   return showDialog<void>(
     context: contextMain,
     barrierDismissible: false, // user must tap button!
@@ -17,10 +18,10 @@ Future<void> showDialogColor(BuildContext contextMain) async {
           backgroundColor: const Color(0xff3B4254),
           content: SingleChildScrollView(
               child: BlockPicker(
-            pickerColor: Color(CharUtil.char.color), //default color
+            pickerColor: Color(char.color), //default color
             onColorChanged: (Color color) {
               setState(() {
-                CharUtil.char.color = color.value;
+                char.color = color.value;
               });
             },
           )),

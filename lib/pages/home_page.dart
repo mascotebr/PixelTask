@@ -11,6 +11,7 @@ import 'package:pixel_tasks/widgets/card_task.dart';
 import 'package:pixel_tasks/widgets/dialog_task.dart';
 import 'package:provider/provider.dart';
 import '../model/task.dart';
+import '../services/char_repository.dart';
 import '../services/task_finished_repository.dart';
 import '../services/task_repository.dart';
 import '../utils/help_util.dart';
@@ -26,12 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  @override
-  void initState() {
-    readAllTasks();
-    super.initState();
-  }
-
+  late CharRepository char;
   late TaskRepository tasks;
   late TaskFinishedRepository tasksFinished;
 
@@ -69,7 +65,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       exp = task.difficulty.exp;
     }
 
-    if (CharUtil.char.exp + exp >= CharUtil.maxExp) {
+    if (char.single.exp + exp >= char.maxExp) {
       showDialogLevelUp(context, exp);
     } else {
       showDialogExp(context, exp);
@@ -83,8 +79,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     tasksFinished.save(task);
 
-    CharUtil.addExp(exp);
-    readAllTasks();
+    char.addExp(exp);
+
+    List<Achievements> newsAchievements =
+        await char.checkAchivements(tasksFinished.list);
+
+    newAchievementsDialogs(newsAchievements);
 
     if (task.isDaily) {
       await Future.delayed(const Duration(seconds: 3), () {
@@ -100,22 +100,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> readAllTasks() async {
-    await CharUtil.setChar();
+    // await CharUtil.setChar();
 
     // tasksFinished = await TaskUtil.readTasksFinished();
 
-    setState(() {});
-
-    List<Achievements> newsAchievements = await CharUtil.checkAchivements();
-
-    newAchievementsDialogs(newsAchievements);
+    // setState(() {});
   }
 
   Future<void> newAchievementsDialogs(
       List<Achievements> newsAchievements) async {
     if (newsAchievements.isNotEmpty) {
       for (var a in newsAchievements) {
-        await showDialogAchievement(context, a);
+        await showDialogAchievement(context, a, char.medalImage(a.medal!));
       }
     }
   }
@@ -123,6 +119,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Task task = Task();
+    char = context.watch<CharRepository>();
     tasks = context.watch<TaskRepository>();
     tasksFinished = context.watch<TaskFinishedRepository>();
 
@@ -139,9 +136,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               return CustomScrollView(slivers: [
                 SliverAppBar(
                     expandedHeight: 340.0,
-                    backgroundColor: Color(CharUtil.char.color).withAlpha(25),
+                    backgroundColor: Color(char.single.color).withAlpha(25),
                     flexibleSpace: FlexibleSpaceBar(
-                        background: CharUtil.pixelChar(context, 0, 1))),
+                        background: char.pixelChar(context, 0, 1))),
                 SliverList(
                     delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -170,7 +167,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             body: Row(
               children: [
-                BodysUtil.navegationDesktop(context, 1),
+                BodysUtil.navegationDesktop(
+                    context,
+                    1,
+                    char.pixelChar(
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
                 AnimatedContainer(
                   margin: const EdgeInsets.only(
                     left: 8.0,

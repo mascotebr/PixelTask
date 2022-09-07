@@ -129,9 +129,7 @@ class NavigationUtil {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => const PixelCharPage(
-              title: 'Pixel Char',
-            ),
+            pageBuilder: (c, a1, a2) => const PixelCharPage(),
             transitionsBuilder: (c, anim, a2, child) =>
                 FadeTransition(opacity: anim, child: child),
             transitionDuration: const Duration(milliseconds: 300),

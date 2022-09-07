@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:pixel_tasks/model/achievements.dart';
-import 'package:pixel_tasks/utils/char_util.dart';
 
-Future<void> showDialogAchievement(
-    BuildContext contextMain, Achievements achievement) async {
+Future<void> showDialogAchievement(BuildContext contextMain,
+    Achievements achievement, Widget medalImage) async {
   showAnimatedDialog(
     context: contextMain,
     barrierDismissible: true,
     builder: (BuildContext context) {
-      return dialogAchiement(context, achievement);
+      return dialogAchiement(context, achievement, medalImage);
     },
     animationType: DialogTransitionType.scale,
     curve: Curves.bounceInOut,
@@ -17,7 +16,8 @@ Future<void> showDialogAchievement(
   );
 }
 
-Widget dialogAchiement(BuildContext context, Achievements achievement) {
+Widget dialogAchiement(
+    BuildContext context, Achievements achievement, Widget medalImage) {
   return AlertDialog(
       elevation: 8,
       backgroundColor: const Color(0xff3B4254),
@@ -32,7 +32,7 @@ Widget dialogAchiement(BuildContext context, Achievements achievement) {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CharUtil.medalImage(achievement.medal!),
+                medalImage,
                 Text(
                   achievement.name!,
                   style: const TextStyle(color: Colors.white, fontSize: 24),

@@ -15,7 +15,8 @@ class BodysUtil {
     }
   }
 
-  static Widget navegationDesktop(BuildContext context, int index) {
+  static Widget navegationDesktop(
+      BuildContext context, int index, Widget pixelChar) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.2,
       child: Column(
@@ -28,8 +29,7 @@ class BodysUtil {
                   borderRadius: BorderRadius.circular(15),
                   color: Color(CharUtil.char.color).withAlpha(25),
                 ),
-                child: CharUtil.pixelChar(
-                    context, MediaQuery.of(context).size.width * 0.8, 0.2)),
+                child: pixelChar),
           ),
           NavigationUtil.leftNavigator(index, context),
         ],

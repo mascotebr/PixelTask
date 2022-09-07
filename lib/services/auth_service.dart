@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pixel_tasks/main.dart';
 
 class AuthException implements Exception {
   String message;
@@ -55,8 +56,10 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  logout() async {
+  logout(BuildContext context) async {
     await _auth.signOut();
     _getUser();
+    // ignore: use_build_context_synchronously
+    RestartWidget.restartApp(context);
   }
 }

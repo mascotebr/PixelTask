@@ -3,43 +3,45 @@ import 'package:pixel_tasks/model/char.dart';
 import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/pages/achievements_page.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
-import 'package:pixel_tasks/utils/char_util.dart';
+import 'package:pixel_tasks/services/char_repository.dart';
 import 'package:provider/provider.dart';
 import '../utils/bodys_util.dart';
 import '../utils/navigation_util.dart';
 import '../widgets/dialog_color.dart';
 
 class PixelCharPage extends StatefulWidget {
-  const PixelCharPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const PixelCharPage({Key? key}) : super(key: key);
 
   @override
   State<PixelCharPage> createState() => _PixelCharPageState();
 }
 
 class _PixelCharPageState extends State<PixelCharPage> {
-  Char charInitial = Char();
+  Char charUpdate = Char();
+  late CharRepository char;
 
-  @override
-  void initState() {
-    readChar();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // readChar();
+  //   super.initState();
+  // }
 
-  Future<void> readChar() async {
-    await CharUtil.setChar();
-    charInitial = CharUtil.char;
-    setState(() {});
-  }
+  // Future<void> readChar() async {
+  //   // await CharUtil.setChar();
+  //   // setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
+    char = context.watch<CharRepository>();
+    charUpdate = char.single;
+
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
             backgroundColor: const Color(0xff3B4254),
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text('Pixel Char'),
               backgroundColor: const Color.fromARGB(255, 38, 44, 58),
             ),
             body: SingleChildScrollView(
@@ -74,13 +76,13 @@ class _PixelCharPageState extends State<PixelCharPage> {
                         height: 200,
                         margin: const EdgeInsets.only(bottom: 16.0),
                         child: Image.asset(
-                          CharUtil.char.classChar.image,
+                          charUpdate.classChar.image,
                         ),
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         style: const TextStyle(color: Colors.white),
-                        initialValue: CharUtil.char.name,
+                        initialValue: charUpdate.name,
                         decoration: InputDecoration(
                             labelText: 'Name',
                             labelStyle: const TextStyle(color: Colors.white),
@@ -95,7 +97,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               borderRadius: BorderRadius.circular(15),
                             )),
                         onChanged: (name) {
-                          CharUtil.char.name = name.trim();
+                          charUpdate.name = name.trim();
                         },
                       ),
                       Container(
@@ -124,7 +126,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.7,
                                 child: DropdownButton<ClassChar>(
-                                  value: CharUtil.char.classChar,
+                                  value: char.single.classChar,
                                   icon: const Icon(
                                     Icons.arrow_drop_down,
                                     color: Color(0xff424C5E),
@@ -137,12 +139,12 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   ),
                                   onChanged: (ClassChar? newValue) {
                                     setState(() {
-                                      CharUtil.char.classChar = CharUtil
-                                          .char.classChar.listValues
+                                      charUpdate.classChar = char
+                                          .single.classChar.listValues
                                           .firstWhere((e) => e == newValue);
                                     });
                                   },
-                                  items: CharUtil.char.classChar.listValues
+                                  items: char.single.classChar.listValues
                                       .map<DropdownMenuItem<ClassChar>>(
                                           (ClassChar value) {
                                     return DropdownMenuItem<ClassChar>(
@@ -173,7 +175,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               ),
                             ),
                             onPressed: () async {
-                              await showDialogColor(context);
+                              await showDialogColor(context, charUpdate);
                               setState(() {});
                             },
                             child: Row(
@@ -187,7 +189,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Icon(Icons.circle,
-                                      color: Color(CharUtil.char.color)),
+                                      color: Color(charUpdate.color)),
                                 ),
                               ],
                             )),
@@ -201,7 +203,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               borderRadius: BorderRadius.circular(15),
                               color: const Color(0xff424C5E),
                               border: Border.all(
-                                color: isDiferent(charInitial)
+                                color: isDiferent(char.single)
                                     ? Colors.white
                                     : const Color(0xff424C5E),
                                 width: 2,
@@ -214,7 +216,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               ),
                             ),
                             onPressed: () async {
-                              await CharUtil.writeChar(CharUtil.char);
+                              // await CharUtil.writeChar(CharUtil.char);
+                              char.save(char.single);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Saved'),
@@ -229,8 +232,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24.0),
                         child: OutlinedButton(
-                            onPressed: () {
-                              context.read<AuthService>().logout();
+                            onPressed: () async {
+                              await context.read<AuthService>().logout(context);
                             },
                             style:
                                 OutlinedButton.styleFrom(primary: Colors.red),
@@ -264,7 +267,11 @@ class _PixelCharPageState extends State<PixelCharPage> {
             ),
             body: Row(
               children: [
-                BodysUtil.navegationDesktop(context, 0),
+                BodysUtil.navegationDesktop(
+                    context,
+                    0,
+                    char.pixelChar(
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
                 Container(
                   margin: const EdgeInsets.only(
                     left: 8.0,
@@ -289,7 +296,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                           TextFormField(
                             textInputAction: TextInputAction.next,
                             style: const TextStyle(color: Colors.white),
-                            initialValue: CharUtil.char.name,
+                            initialValue: charUpdate.name,
                             decoration: InputDecoration(
                                 labelText: 'Name',
                                 labelStyle:
@@ -306,7 +313,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                 )),
                             onChanged: (name) {
                               setState(() {
-                                CharUtil.char.name = name.trim();
+                                charUpdate.name = name.trim();
                               });
                             },
                           ),
@@ -338,7 +345,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                     width:
                                         MediaQuery.of(context).size.width * 0.4,
                                     child: DropdownButton<ClassChar>(
-                                      value: CharUtil.char.classChar,
+                                      value: charUpdate.classChar,
                                       icon: const Icon(
                                         Icons.arrow_drop_down,
                                         color: Color(0xff424C5E),
@@ -352,12 +359,12 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                       ),
                                       onChanged: (ClassChar? newValue) {
                                         setState(() {
-                                          CharUtil.char.classChar = CharUtil
-                                              .char.classChar.listValues
+                                          charUpdate.classChar = char
+                                              .single.classChar.listValues
                                               .firstWhere((e) => e == newValue);
                                         });
                                       },
-                                      items: CharUtil.char.classChar.listValues
+                                      items: charUpdate.classChar.listValues
                                           .map<DropdownMenuItem<ClassChar>>(
                                               (ClassChar value) {
                                         return DropdownMenuItem<ClassChar>(
@@ -388,7 +395,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  await showDialogColor(context);
+                                  await showDialogColor(context, charUpdate);
                                   setState(() {});
                                 },
                                 child: Row(
@@ -402,7 +409,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Icon(Icons.circle,
-                                          color: Color(CharUtil.char.color)),
+                                          color: Color(charUpdate.color)),
                                     ),
                                   ],
                                 )),
@@ -416,7 +423,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   borderRadius: BorderRadius.circular(15),
                                   color: const Color(0xff424C5E),
                                   border: Border.all(
-                                    color: isDiferent(charInitial)
+                                    color: isDiferent(char.single)
                                         ? Colors.white
                                         : const Color(0xff424C5E),
                                     width: 2,
@@ -429,7 +436,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  await CharUtil.writeChar(CharUtil.char);
+                                  // await CharUtil.writeChar(CharUtil.char);
+                                  char.save(charUpdate);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Saved'),
@@ -449,10 +457,10 @@ class _PixelCharPageState extends State<PixelCharPage> {
             )));
   }
 
-  bool isDiferent(Char char) {
-    if (CharUtil.char.name != char.name ||
-        CharUtil.char.classChar != char.classChar ||
-        CharUtil.char.color != char.color) {
+  bool isDiferent(Char c) {
+    if (char.single.name != c.name ||
+        char.single.classChar != c.classChar ||
+        char.single.color != c.color) {
       return true;
     }
 

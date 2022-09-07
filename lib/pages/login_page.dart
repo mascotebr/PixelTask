@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 64.0, left: 16, right: 16),
+                                  top: 64.0, left: 32, right: 32),
                               child: TextFormField(
                                 controller: email,
                                 style: const TextStyle(color: Colors.white),
@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 24.0, left: 16, right: 16),
+                                  top: 24.0, left: 32, right: 32),
                               child: TextFormField(
                                 controller: password,
                                 obscureText: true,

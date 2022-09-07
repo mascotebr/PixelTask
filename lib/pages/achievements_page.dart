@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/model/achievements.dart';
+import 'package:pixel_tasks/services/char_repository.dart';
+import 'package:provider/provider.dart';
+
 import '../utils/bodys_util.dart';
-import '../utils/char_util.dart';
 
 class AchievementsPage extends StatefulWidget {
   const AchievementsPage({super.key});
@@ -12,9 +14,12 @@ class AchievementsPage extends StatefulWidget {
 
 class _AchievementsPageState extends State<AchievementsPage> {
   Achievements selected = Achievements(name: "");
+  late CharRepository char;
 
   @override
   Widget build(BuildContext context) {
+    char = context.watch<CharRepository>();
+
     return BodysUtil.bodyResponsiveHome(
       context,
       Scaffold(
@@ -101,7 +106,11 @@ class _AchievementsPageState extends State<AchievementsPage> {
         ),
         body: Row(
           children: [
-            BodysUtil.navegationDesktop(context, 3),
+            BodysUtil.navegationDesktop(
+                context,
+                3,
+                char.pixelChar(
+                    context, MediaQuery.of(context).size.width * 0.8, 0.2)),
             AnimatedContainer(
               margin: const EdgeInsets.only(
                 left: 8.0,
@@ -185,12 +194,12 @@ class _AchievementsPageState extends State<AchievementsPage> {
   }
 
   Widget medals() {
-    int medals = CharUtil.achievements.length;
+    int medals = char.achievements.length;
     return GridView.count(
       crossAxisCount: 3,
       padding: const EdgeInsets.all(16.0),
       children: [
-        for (int i = 0; i < medals; i++) cardMedal(CharUtil.achievements[i]),
+        for (int i = 0; i < medals; i++) cardMedal(char.achievements[i]),
       ],
     );
   }
@@ -272,7 +281,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
   }
 
   Future<void> _getAchievements() async {
-    await CharUtil.checkAchivements();
+    await char.getAchivements();
     return;
   }
 }
