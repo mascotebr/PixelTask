@@ -9,7 +9,7 @@ import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/services/task_repository.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main() async {   
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(

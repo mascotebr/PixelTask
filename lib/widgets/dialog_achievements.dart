@@ -13,7 +13,7 @@ Future<void> showDialogAchievement(BuildContext contextMain,
       return dialogAchiement(context, achievement, medalImage);
     },
     animationType: DialogTransitionType.scale,
-    curve: Curves.bounceInOut,
+    curve: Curves.easeInOut,
     duration: const Duration(seconds: 2),
   );
 }

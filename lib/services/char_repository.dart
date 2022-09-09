@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
+import 'package:pixel_tasks/utils/connectivity_util.dart';
 
 import '../model/achievements.dart';
 import '../model/char.dart';
@@ -29,30 +34,38 @@ class CharRepository extends ChangeNotifier {
   }
 
   _readChar() async {
-    if (auth.userA != null && single.name == "") {
-      final snapshot =
-          await db.collection('users/${auth.userA!.uid}/char').get();
+    if (auth.userP != null && single.name == "") {
+      if (await ConnectivityUtil.verify()) {
+        final snapshot =
+            await db.collection('users/${auth.userA!.uid}/char').get();
 
-      single = snapshot.docs
-              .map((single) => Char.fromJson(single.data()))
-              .toList()
-              .isNotEmpty
-          ? snapshot.docs.map((single) => Char.fromJson(single.data())).first
-          : Char();
+        single = snapshot.docs
+                .map((single) => Char.fromJson(single.data()))
+                .toList()
+                .isNotEmpty
+            ? snapshot.docs.map((single) => Char.fromJson(single.data())).first
+            : Char();
+      } else {
+        single = await _readCharDoc();
+      }
       notifyListeners();
     }
   }
 
-  save(Char char) {
+  save(Char char) async {
     single = char;
-    db.collection("users/${auth.userA!.uid}/char").doc().set({
-      'name': single.name,
-      'classChar': single.classChar.toString(),
-      'color': single.color,
-      'exp': single.exp,
-      'level': single.level,
-      'achievements': achievements,
-    });
+    if (await ConnectivityUtil.verify()) {
+      db.collection("users/${auth.userA!.uid}/char").doc().set({
+        'name': single.name,
+        'classChar': single.classChar.toString(),
+        'color': single.color,
+        'exp': single.exp,
+        'level': single.level,
+        'achievements': achievements,
+      });
+    }
+    await _writeCharDoc(char);
+
     notifyListeners();
   }
 
@@ -205,6 +218,37 @@ class CharRepository extends ChangeNotifier {
 
     return list;
   }
+
+  //Documents
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/char.txt');
+  }
+
+  Future<void> _writeCharDoc(Char char) async {
+    final file = await _localFile;
+    String json = jsonEncode(char);
+    await file.writeAsString(json);
+  }
+
+  Future<Char> _readCharDoc() async {
+    try {
+      final file = await _localFile;
+      final contents = await file.readAsString();
+      dynamic obj = json.decode(contents);
+      return Char.fromJson(obj);
+    } catch (e) {
+      return Char();
+    }
+  }
+
+//Widgets
 
   Widget pixelChar(
       BuildContext context, double minusWidth, double maxWidthPorcent) {

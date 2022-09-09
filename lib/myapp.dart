@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pixel_tasks/widgets/auh_check.dart';
+import 'package:pixel_tasks/widgets/auth_check.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

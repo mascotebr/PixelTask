@@ -9,7 +9,7 @@ Future<void> showDialogExp(BuildContext contextMain, double exp) async {
       return dialogExp(context, exp);
     },
     animationType: DialogTransitionType.scale,
-    curve: Curves.bounceInOut,
+    curve: Curves.easeInOut,
     duration: const Duration(seconds: 2),
   );
 }
@@ -52,7 +52,7 @@ Future<void> showDialogLevelUp(BuildContext contextMain, double exp) async {
       return dialogLevelUp(context, exp);
     },
     animationType: DialogTransitionType.scale,
-    curve: Curves.bounceInOut,
+    curve: Curves.easeInOut,
     duration: const Duration(seconds: 2),
   );
 }
