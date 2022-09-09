@@ -4,6 +4,8 @@ import 'package:pixel_tasks/model/task.dart';
 import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/utils/task_util.dart';
 
+import '../utils/design_util.dart';
+
 Future<void> showDialogTask(BuildContext contextMain, Function createTask,
     Function editTask, Task? task) async {
   task ??= Task();
@@ -23,7 +25,7 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: const Color(0xff3B4254),
+          backgroundColor: DesignUtil.gray,
           content: SingleChildScrollView(
             child: Form(
               key: formKey,
@@ -231,7 +233,7 @@ void selectDate(BuildContext context, Task task,
       builder: (contextT, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
-            dialogBackgroundColor: const Color(0xff3B4254),
+            dialogBackgroundColor: DesignUtil.gray,
           ),
           child: child!,
         );

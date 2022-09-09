@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return web;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,13 +41,14 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAGUaHfXjUoYZUJaXqTjISUJKUR-5DGOUk',
-    appId: '1:1072338968606:web:70f7d1f897bcbdabb84e0f',
-    messagingSenderId: '1072338968606',
-    projectId: 'pixel-tasks-d8cd1',
-    authDomain: 'pixel-tasks-d8cd1.firebaseapp.com',
-    storageBucket: 'pixel-tasks-d8cd1.appspot.com',
-  );
+      apiKey: "AIzaSyAGUaHfXjUoYZUJaXqTjISUJKUR-5DGOUk",
+      authDomain: "pixel-tasks-d8cd1.firebaseapp.com",
+      databaseURL: "https://pixel-tasks-d8cd1-default-rtdb.firebaseio.com",
+      projectId: "pixel-tasks-d8cd1",
+      storageBucket: "pixel-tasks-d8cd1.appspot.com",
+      messagingSenderId: "1072338968606",
+      appId: "1:1072338968606:web:70f7d1f897bcbdabb84e0f",
+      measurementId: "G-WXLGEZYH9B");
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD_wLH9t9IY9p8wWwrB2YkN8VBD99oYf2Y',
@@ -66,7 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1072338968606',
     projectId: 'pixel-tasks-d8cd1',
     storageBucket: 'pixel-tasks-d8cd1.appspot.com',
-    iosClientId: '1072338968606-e0hq30ddq701a2rolpv1jq57j7rgd6vt.apps.googleusercontent.com',
+    iosClientId:
+        '1072338968606-e0hq30ddq701a2rolpv1jq57j7rgd6vt.apps.googleusercontent.com',
     iosBundleId: 'com.example.pixelTasks',
   );
 
@@ -76,7 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1072338968606',
     projectId: 'pixel-tasks-d8cd1',
     storageBucket: 'pixel-tasks-d8cd1.appspot.com',
-    iosClientId: '1072338968606-e0hq30ddq701a2rolpv1jq57j7rgd6vt.apps.googleusercontent.com',
+    iosClientId:
+        '1072338968606-e0hq30ddq701a2rolpv1jq57j7rgd6vt.apps.googleusercontent.com',
     iosBundleId: 'com.example.pixelTasks',
   );
 }

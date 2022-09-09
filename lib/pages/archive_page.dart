@@ -4,6 +4,7 @@ import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/design_util.dart';
 import '../utils/navigation_util.dart';
 import '../widgets/card_task.dart';
 
@@ -26,10 +27,10 @@ class _ArchivePageState extends State<ArchivePage> {
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               title: const Text("Completed Tasks"),
-              backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+              backgroundColor: DesignUtil.darkGray,
             ),
             body: tasksFinished.list.isNotEmpty
                 ? Consumer<TaskFinishedRepository>(
@@ -56,7 +57,7 @@ class _ArchivePageState extends State<ArchivePage> {
         //Windows
 
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               toolbarHeight: 0,
               backgroundColor: Colors.transparent,
@@ -67,7 +68,8 @@ class _ArchivePageState extends State<ArchivePage> {
                     context,
                     2,
                     char.pixelChar(
-                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2),
+                    char.single),
                 Container(
                   margin: const EdgeInsets.only(
                     left: 8.0,

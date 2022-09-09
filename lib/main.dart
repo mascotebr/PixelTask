@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/firebase_options.dart';
 import 'package:pixel_tasks/myapp.dart';
@@ -8,7 +9,7 @@ import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/services/task_repository.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main() async {
+Future<void> main() async {   
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(

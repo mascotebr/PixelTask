@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
@@ -41,7 +40,7 @@ class _CardTaskState extends State<CardTask> {
                     children: [
                       Text(
                         widget.task.title.trim(),
-                        textScaleFactor: Platform.isAndroid ? 1 : 0.8,
+                        textScaleFactor: !kIsWeb ? 1 : 0.8,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -63,7 +62,7 @@ class _CardTaskState extends State<CardTask> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.task.description!.trim(),
-                      textScaleFactor: Platform.isAndroid ? 1 : 0.8,
+                      textScaleFactor: !kIsWeb ? 1 : 0.8,
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -78,7 +77,7 @@ class _CardTaskState extends State<CardTask> {
                   padding: const EdgeInsets.only(right: 24.0, top: 6.0),
                   child: Text(
                     "${widget.task.repeat}",
-                    textScaleFactor: Platform.isAndroid ? 1 : 0.8,
+                    textScaleFactor: !kIsWeb ? 1 : 0.8,
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -97,7 +96,7 @@ class _CardTaskState extends State<CardTask> {
                 alignment: Alignment.bottomRight,
                 child: Text(
                   DateFormat('MM/dd/yyyy').format(widget.task.date!),
-                  textScaleFactor: Platform.isAndroid ? 1 : 0.8,
+                  textScaleFactor: !kIsWeb ? 1 : 0.8,
                   style: TextStyle(
                       color: DateTime.now().isBefore(
                               widget.task.date!.add(const Duration(days: 1)))

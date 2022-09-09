@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../model/char.dart';
+import '../utils/design_util.dart';
 
 Future<void> showDialogColor(BuildContext contextMain, Char char) async {
   return showDialog<void>(
@@ -15,7 +16,7 @@ Future<void> showDialogColor(BuildContext contextMain, Char char) async {
             'Select Color',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: const Color(0xff3B4254),
+          backgroundColor: DesignUtil.gray,
           content: SingleChildScrollView(
               child: BlockPicker(
             pickerColor: Color(char.color), //default color

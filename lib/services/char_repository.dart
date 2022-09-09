@@ -181,11 +181,36 @@ class CharRepository extends ChangeNotifier {
     return newAchievements;
   }
 
+  List<ClassChar> get listAchievements {
+    List<ClassChar> list = <ClassChar>[];
+
+    list.add(ClassChar.archer);
+    list.add(ClassChar.mage);
+    list.add(ClassChar.thief);
+    list.add(ClassChar.warrior);
+
+    if (single.achievements.where((a) => a.name == "E X P E R T").isNotEmpty) {
+      list.add(ClassChar.liver);
+    }
+
+    if (single.achievements.where((a) => a.name == "SUN WORKER").isNotEmpty) {
+      list.add(ClassChar.sunWorker);
+    }
+
+    if (single.achievements
+        .where((a) => a.name == "MASTER WRITER")
+        .isNotEmpty) {
+      list.add(ClassChar.pencilMaster);
+    }
+
+    return list;
+  }
+
   Widget pixelChar(
       BuildContext context, double minusWidth, double maxWidthPorcent) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.only(
@@ -234,8 +259,15 @@ class CharRepository extends ChangeNotifier {
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: Center(child: Image.asset(single.classChar.image)),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          width: single.name.length * 20,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(30.0),
+            ),
+            color: Color.fromARGB(255, 38, 44, 58),
+          ),
           child: Center(
             child: Text(single.name,
                 style: const TextStyle(

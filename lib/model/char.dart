@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:pixel_tasks/model/achievements.dart';
 import 'package:pixel_tasks/model/class_char.dart';
 import 'package:pixel_tasks/utils/char_util.dart';
 
 class Char {
+  String key = UniqueKey().toString();
   String name = "";
   ClassChar classChar = ClassChar.warrior;
   int color = 0xFF2196F3;

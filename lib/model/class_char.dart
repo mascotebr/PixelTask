@@ -1,5 +1,3 @@
-import 'package:pixel_tasks/utils/char_util.dart';
-
 enum ClassChar {
   warrior,
   thief,
@@ -49,36 +47,5 @@ extension ClassCharImageExtension on ClassChar {
       case ClassChar.sunWorker:
         return 'images/sun-worker.png';
     }
-  }
-}
-
-extension ClassCharListExtension on ClassChar {
-  List<ClassChar> get listValues {
-    List<ClassChar> list = <ClassChar>[];
-
-    list.add(ClassChar.archer);
-    list.add(ClassChar.mage);
-    list.add(ClassChar.thief);
-    list.add(ClassChar.warrior);
-
-    if (CharUtil.char.achievements
-        .where((a) => a.name == "E X P E R T")
-        .isNotEmpty) {
-      list.add(ClassChar.liver);
-    }
-
-    if (CharUtil.char.achievements
-        .where((a) => a.name == "SUN WORKER")
-        .isNotEmpty) {
-      list.add(ClassChar.sunWorker);
-    }
-
-    if (CharUtil.char.achievements
-        .where((a) => a.name == "MASTER WRITER")
-        .isNotEmpty) {
-      list.add(ClassChar.pencilMaster);
-    }
-
-    return list;
   }
 }

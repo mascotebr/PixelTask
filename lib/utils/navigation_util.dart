@@ -4,10 +4,12 @@ import 'package:pixel_tasks/pages/archive_page.dart';
 import 'package:pixel_tasks/pages/home_page.dart';
 import 'package:pixel_tasks/pages/pixel_char_page.dart';
 
+import 'design_util.dart';
+
 class NavigationUtil {
   static Widget bottomNavigator(int selectedIndex, BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+      backgroundColor: DesignUtil.darkGray,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: Icon(
@@ -30,7 +32,7 @@ class NavigationUtil {
       ],
       currentIndex: selectedIndex,
       selectedItemColor: Colors.white,
-      unselectedItemColor: const Color(0xff3B4254),
+      unselectedItemColor: DesignUtil.gray,
       onTap: (index) {
         onItemTapped(index, context);
       },

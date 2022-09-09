@@ -1,14 +1,13 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'char_util.dart';
+import '../model/char.dart';
 import 'navigation_util.dart';
 
 class BodysUtil {
   static Widget bodyResponsiveHome(
       BuildContext context, Widget bodyAndroid, Widget bodyWindows) {
-    if (Platform.isWindows) {
+    if (kIsWeb) {
       return bodyWindows;
     } else {
       return bodyAndroid;
@@ -16,7 +15,7 @@ class BodysUtil {
   }
 
   static Widget navegationDesktop(
-      BuildContext context, int index, Widget pixelChar) {
+      BuildContext context, int index, Widget pixelChar, Char char) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.2,
       child: Column(
@@ -27,7 +26,7 @@ class BodysUtil {
             child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Color(CharUtil.char.color).withAlpha(25),
+                  color: Color(char.color).withAlpha(25),
                 ),
                 child: pixelChar),
           ),

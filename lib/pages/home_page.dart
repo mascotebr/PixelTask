@@ -1,10 +1,8 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/model/achievements.dart';
-import 'package:pixel_tasks/utils/char_util.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
@@ -14,6 +12,7 @@ import '../model/task.dart';
 import '../services/char_repository.dart';
 import '../services/task_finished_repository.dart';
 import '../services/task_repository.dart';
+import '../utils/design_util.dart';
 import '../utils/help_util.dart';
 import '../utils/task_util.dart';
 import '../widgets/dialog_achievements.dart';
@@ -94,9 +93,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _onDeleteTask(Task task) async {
-    await TaskUtil.deleteTask(task);
-    await readAllTasks();
-    setState(() {});
+    //  await TaskUtil.deleteTask(task);
+    // await readAllTasks();
+    // setState(() {});
+    tasks.remove(task);
   }
 
   Future<void> readAllTasks() async {
@@ -126,10 +126,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               title: const Text("Pixel Tasks"),
-              backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+              backgroundColor: DesignUtil.darkGray,
               toolbarHeight: 0,
             ),
             body: Consumer<TaskRepository>(builder: (context, ts, child) {
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               onPressed: () =>
                   showDialogTask(context, _onCreateTask, _onEditTask, null),
               tooltip: 'New Task',
-              backgroundColor: Color(CharUtil.char.color),
+              backgroundColor: Color(char.single.color),
               child: const Icon(Icons.add),
             ),
             bottomNavigationBar: NavigationUtil.bottomNavigator(1, context)),
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         //Windows
 
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               toolbarHeight: 0,
               backgroundColor: Colors.transparent,
@@ -171,7 +171,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     context,
                     1,
                     char.pixelChar(
-                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2),
+                    char.single),
                 AnimatedContainer(
                   margin: const EdgeInsets.only(
                     left: 8.0,
@@ -199,8 +200,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Column(
                               children: [
                                 for (int index = 0;
-                                    index < tasks.list.length ||
-                                        (tasks.list.isEmpty && index == 0);
+                                    index < ts.list.length ||
+                                        (ts.list.isEmpty && index == 0);
                                     index++)
                                   taskItem(context, index, ts.list, true),
                               ],
@@ -225,7 +226,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         color: Colors.white,
                                       ),
                                       filled: true,
-                                      fillColor: const Color(0xff3B4254),
+                                      fillColor: DesignUtil.gray,
                                       labelText: 'New Task',
                                       labelStyle:
                                           const TextStyle(color: Colors.white),
@@ -292,7 +293,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ? DismissDirection.endToStart
             : DismissDirection.horizontal,
         background: Container(
-          color: const Color(0xff3B4254),
+          color: DesignUtil.gray,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +312,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         secondaryBackground: Container(
-          color: const Color(0xff3B4254),
+          color: DesignUtil.gray,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -342,7 +343,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           taskSelected = task;
         });
 
-        if (Platform.isAndroid) {
+        if (!kIsWeb) {
           showDialogTask(context, _onCreateTask, _onEditTask, task);
         }
         setState(() {});

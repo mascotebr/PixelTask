@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:pixel_tasks/model/achievements.dart';
 
+import '../utils/design_util.dart';
+
 Future<void> showDialogAchievement(BuildContext contextMain,
     Achievements achievement, Widget medalImage) async {
   showAnimatedDialog(
@@ -20,7 +22,7 @@ Widget dialogAchiement(
     BuildContext context, Achievements achievement, Widget medalImage) {
   return AlertDialog(
       elevation: 8,
-      backgroundColor: const Color(0xff3B4254),
+      backgroundColor: DesignUtil.gray,
       content: SizedBox(
         height: 200,
         width: 100,

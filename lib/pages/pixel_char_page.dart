@@ -6,6 +6,7 @@ import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/services/char_repository.dart';
 import 'package:provider/provider.dart';
 import '../utils/bodys_util.dart';
+import '../utils/design_util.dart';
 import '../utils/navigation_util.dart';
 import '../widgets/dialog_color.dart';
 
@@ -19,6 +20,7 @@ class PixelCharPage extends StatefulWidget {
 class _PixelCharPageState extends State<PixelCharPage> {
   Char charUpdate = Char();
   late CharRepository char;
+  final formKey = GlobalKey<FormState>();
 
   // @override
   // void initState() {
@@ -34,20 +36,21 @@ class _PixelCharPageState extends State<PixelCharPage> {
   @override
   Widget build(BuildContext context) {
     char = context.watch<CharRepository>();
-    charUpdate = char.single;
+    if (charUpdate.key != char.single.key) _setCharUpdate();
 
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               title: const Text('Pixel Char'),
-              backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+              backgroundColor: DesignUtil.darkGray,
             ),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(
+                  key: formKey,
                   child: ListBody(
                     children: <Widget>[
                       Align(
@@ -98,6 +101,13 @@ class _PixelCharPageState extends State<PixelCharPage> {
                             )),
                         onChanged: (name) {
                           charUpdate.name = name.trim();
+                          setState(() {});
+                        },
+                        validator: (value) {
+                          if (value != null && value.length > 20) {
+                            return "ame is too big";
+                          }
+                          return null;
                         },
                       ),
                       Container(
@@ -140,11 +150,11 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   onChanged: (ClassChar? newValue) {
                                     setState(() {
                                       charUpdate.classChar = char
-                                          .single.classChar.listValues
+                                          .listAchievements
                                           .firstWhere((e) => e == newValue);
                                     });
                                   },
-                                  items: char.single.classChar.listValues
+                                  items: char.listAchievements
                                       .map<DropdownMenuItem<ClassChar>>(
                                           (ClassChar value) {
                                     return DropdownMenuItem<ClassChar>(
@@ -194,38 +204,41 @@ class _PixelCharPageState extends State<PixelCharPage> {
                               ],
                             )),
                       ),
-                      Center(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 16),
-                          width: MediaQuery.of(context).size.width * 0.33,
-                          height: 45,
-                          decoration: BoxDecoration(
+                      Opacity(
+                        opacity: isDiferent(charUpdate) ? 1 : 0.5,
+                        child: Center(
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 16),
+                            width: MediaQuery.of(context).size.width * 0.33,
+                            height: 45,
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               color: const Color(0xff424C5E),
-                              border: Border.all(
-                                color: isDiferent(char.single)
-                                    ? Colors.white
-                                    : const Color(0xff424C5E),
-                                width: 2,
-                              )),
-                          child: TextButton(
-                            child: const Text(
-                              'Save',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
                             ),
-                            onPressed: () async {
-                              // await CharUtil.writeChar(CharUtil.char);
-                              char.save(char.single);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Saved'),
-                                  duration: Duration(seconds: 2),
+                            child: TextButton(
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: Colors.white,
                                 ),
-                              );
-                              setState(() {});
-                            },
+                              ),
+                              onPressed: () async {
+                                if (isDiferent(charUpdate) &&
+                                    formKey.currentState!.validate()) {
+                                  FocusScope.of(context).unfocus();
+                                  // await CharUtil.writeChar(CharUtil.char);
+                                  char.save(charUpdate);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Saved'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  _setCharUpdate();
+                                  setState(() {});
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -235,8 +248,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
                             onPressed: () async {
                               await context.read<AuthService>().logout(context);
                             },
-                            style:
-                                OutlinedButton.styleFrom(primary: Colors.red),
+                            style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.red),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
@@ -260,7 +273,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
         //Windows
 
         Scaffold(
-            backgroundColor: const Color(0xff3B4254),
+            backgroundColor: DesignUtil.gray,
             appBar: AppBar(
               toolbarHeight: 0,
               backgroundColor: Colors.transparent,
@@ -271,7 +284,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
                     context,
                     0,
                     char.pixelChar(
-                        context, MediaQuery.of(context).size.width * 0.8, 0.2)),
+                        context, MediaQuery.of(context).size.width * 0.8, 0.2),
+                    char.single),
                 Container(
                   margin: const EdgeInsets.only(
                     left: 8.0,
@@ -360,11 +374,11 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                       onChanged: (ClassChar? newValue) {
                                         setState(() {
                                           charUpdate.classChar = char
-                                              .single.classChar.listValues
+                                              .listAchievements
                                               .firstWhere((e) => e == newValue);
                                         });
                                       },
-                                      items: charUpdate.classChar.listValues
+                                      items: char.listAchievements
                                           .map<DropdownMenuItem<ClassChar>>(
                                               (ClassChar value) {
                                         return DropdownMenuItem<ClassChar>(
@@ -423,7 +437,7 @@ class _PixelCharPageState extends State<PixelCharPage> {
                                   borderRadius: BorderRadius.circular(15),
                                   color: const Color(0xff424C5E),
                                   border: Border.all(
-                                    color: isDiferent(char.single)
+                                    color: isDiferent(charUpdate)
                                         ? Colors.white
                                         : const Color(0xff424C5E),
                                     width: 2,
@@ -465,5 +479,16 @@ class _PixelCharPageState extends State<PixelCharPage> {
     }
 
     return false;
+  }
+
+  _setCharUpdate() {
+    charUpdate.key = char.single.key;
+    charUpdate.achievements = char.single.achievements;
+    charUpdate.classChar = char.single.classChar;
+    charUpdate.color = char.single.color;
+    charUpdate.exp = char.single.exp;
+    charUpdate.expMax = char.single.expMax;
+    charUpdate.level = char.single.level;
+    charUpdate.name = char.single.name;
   }
 }
