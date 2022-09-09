@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/model/achievements.dart';
 import 'package:pixel_tasks/services/char_repository.dart';
+import 'package:pixel_tasks/utils/design_util.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/bodys_util.dart';
@@ -23,10 +24,10 @@ class _AchievementsPageState extends State<AchievementsPage> {
     return BodysUtil.bodyResponsiveHome(
       context,
       Scaffold(
-          backgroundColor: const Color(0xff3B4254),
+          backgroundColor: DesignUtil.gray,
           appBar: AppBar(
             title: const Text("Achievements"),
-            backgroundColor: const Color.fromARGB(255, 38, 44, 58),
+            backgroundColor: DesignUtil.darkGray,
           ),
           body: FutureBuilder(
             future: _getAchievements(),
@@ -99,7 +100,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       //Windows
 
       Scaffold(
-        backgroundColor: const Color(0xff3B4254),
+        backgroundColor: DesignUtil.gray,
         appBar: AppBar(
           toolbarHeight: 0,
           backgroundColor: Colors.transparent,
@@ -110,7 +111,8 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 context,
                 3,
                 char.pixelChar(
-                    context, MediaQuery.of(context).size.width * 0.8, 0.2)),
+                    context, MediaQuery.of(context).size.width * 0.8, 0.2),
+                char.single),
             AnimatedContainer(
               margin: const EdgeInsets.only(
                 left: 8.0,
