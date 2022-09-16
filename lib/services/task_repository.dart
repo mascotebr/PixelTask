@@ -35,7 +35,7 @@ class TaskRepository extends ChangeNotifier {
         list.addAll(
             snapshot.docs.map((doc) => Task.fromJson(doc.data())).toList());
       } else {
-        list.addAll(await _readTasks());
+        list.addAll(await _readTasksDoc());
       }
       notifyListeners();
     }

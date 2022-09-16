@@ -26,6 +26,8 @@ class _LoginPageState extends State<LoginPage> {
 
   bool loading = false;
 
+  FocusNode passwordFocus = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -151,6 +153,10 @@ class _LoginPageState extends State<LoginPage> {
                                   borderRadius: BorderRadius.circular(15),
                                 )),
                             keyboardType: TextInputType.emailAddress,
+                            onEditingComplete: () {
+                              FocusScope.of(context)
+                                  .requestFocus(passwordFocus);
+                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Is not a email";
@@ -164,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                               top: 24.0, left: padding, right: padding),
                           child: TextFormField(
                             controller: password,
+                            focusNode: passwordFocus,
                             obscureText: true,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
@@ -182,6 +189,13 @@ class _LoginPageState extends State<LoginPage> {
                                       width: 2, color: Colors.white54),
                                   borderRadius: BorderRadius.circular(15),
                                 )),
+                            onEditingComplete: () {
+                              if (formKey.currentState!.validate()) {
+                                if (isLogin) {
+                                  login();
+                                }
+                              }
+                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Type the password";
@@ -192,35 +206,44 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 48, bottom: 16),
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: const Color(0xff424C5E),
-                          ),
-                          child: TextButton(
-                            child: !loading
-                                ? Text(
+                        !loading
+                            ? Container(
+                                margin:
+                                    const EdgeInsets.only(top: 48, bottom: 16),
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: const Color(0xff424C5E),
+                                ),
+                                child: TextButton(
+                                  child: Text(
                                     actionButton,
                                     style: const TextStyle(
                                         color: Colors.white, fontSize: 20),
-                                  )
-                                : const CircularProgressIndicator(
-                                    color: Colors.white,
                                   ),
-                            onPressed: () {
-                              if (formKey.currentState!.validate()) {
-                                if (isLogin) {
-                                  login();
-                                } else {
-                                  register();
-                                }
-                              }
-                            },
-                          ),
-                        ),
+                                  onPressed: () {
+                                    if (formKey.currentState!.validate()) {
+                                      if (isLogin) {
+                                        login();
+                                      } else {
+                                        register();
+                                      }
+                                    }
+                                  },
+                                ),
+                              )
+                            : Container(
+                                margin:
+                                    const EdgeInsets.only(top: 48, bottom: 16),
+                                height: 45,
+                                width: 45,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.transparent),
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )),
                         TextButton(
                             onPressed: () => setFormAction(!isLogin),
                             child: Text(toggleButton))

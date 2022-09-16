@@ -148,13 +148,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 )),
               ]);
             }),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () =>
-                  showDialogTask(context, _onCreateTask, _onEditTask, null),
-              tooltip: 'New Task',
-              backgroundColor: Color(char.single.color),
-              child: const Icon(Icons.add),
-            ),
+            floatingActionButton: char.single.isLoaded
+                ? FloatingActionButton(
+                    onPressed: () => showDialogTask(
+                        context, _onCreateTask, _onEditTask, null),
+                    tooltip: 'New Task',
+                    backgroundColor: Color(char.single.color),
+                    child: const Icon(Icons.add),
+                  )
+                : Container(),
             bottomNavigationBar: NavigationUtil.bottomNavigator(1, context)),
 
         //Windows

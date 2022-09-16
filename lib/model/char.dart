@@ -12,6 +12,7 @@ class Char {
   double expMax = 20;
   int level = 1;
   List<Achievements> achievements = <Achievements>[];
+  bool isLoaded = false;
 
   Char();
 

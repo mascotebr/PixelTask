@@ -45,7 +45,9 @@ class AuthService extends ChangeNotifier {
     userP = (_auth.currentUser == null)
         ? null
         : UserPixel(email: _auth.currentUser!.email);
-    writeUser(userP!);
+
+    writeUser(userP);
+
     notifyListeners();
   }
 

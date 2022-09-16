@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/utils/connectivity_util.dart';
+import 'package:pixel_tasks/utils/design_util.dart';
 
 import '../model/achievements.dart';
 import '../model/char.dart';
@@ -48,12 +49,14 @@ class CharRepository extends ChangeNotifier {
       } else {
         single = await _readCharDoc();
       }
+      single.isLoaded = true;
       notifyListeners();
     }
   }
 
   save(Char char) async {
     single = char;
+    single.isLoaded = true;
     if (await ConnectivityUtil.verify()) {
       db.collection("users/${auth.userA!.uid}/char").doc().set({
         'name': single.name,
@@ -252,76 +255,87 @@ class CharRepository extends ChangeNotifier {
 
   Widget pixelChar(
       BuildContext context, double minusWidth, double maxWidthPorcent) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-              top: 24.0, bottom: 8.0, left: 16.0, right: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return single.isLoaded
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Level ${single.level}",
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "${single.exp.round()} / ${maxExp.round()}",
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: 0.3,
-                child: Container(
-                  color: Color(single.color),
-                  width: MediaQuery.of(context).size.width - minusWidth,
-                  height: 4,
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 24.0, bottom: 8.0, left: 16.0, right: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "Level ${single.level}",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${single.exp.round()} / ${maxExp.round()}",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ),
-              Container(
-                color: Color(single.color),
-                width: widthExp(context) * maxWidthPorcent,
-                height: 4,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Stack(
+                  children: [
+                    Opacity(
+                      opacity: 0.3,
+                      child: Container(
+                        color: Color(single.color),
+                        width: MediaQuery.of(context).size.width - minusWidth,
+                        height: 4,
+                      ),
+                    ),
+                    Container(
+                      color: Color(single.color),
+                      width: widthExp(context) * maxWidthPorcent,
+                      height: 4,
+                    ),
+                  ],
+                ),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Center(child: Image.asset(single.classChar.image)),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                width: single.name.length * 20,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(30.0),
+                  ),
+                  color: Color.fromARGB(255, 38, 44, 58),
+                ),
+                child: Center(
+                  child: Text(single.name,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.bold)),
+                ),
+              )
             ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
-          child: Center(child: Image.asset(single.classChar.image)),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          width: single.name.length * 20,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(30.0),
+          )
+        : Container(
+            color: DesignUtil.darkGray,
+            child: const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 6,
+                color: Colors.white,
+              ),
             ),
-            color: Color.fromARGB(255, 38, 44, 58),
-          ),
-          child: Center(
-            child: Text(single.name,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold)),
-          ),
-        )
-      ],
-    );
+          );
   }
 
   Widget medalImage(int medal) {
