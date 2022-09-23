@@ -22,140 +22,34 @@ class _AchievementsPageState extends State<AchievementsPage> {
     char = context.watch<CharRepository>();
 
     return BodysUtil.bodyResponsiveHome(
-      context,
-      Scaffold(
-          backgroundColor: DesignUtil.gray,
-          appBar: AppBar(
-            title: const Text("Achievements"),
-            backgroundColor: DesignUtil.darkGray,
-          ),
-          body: FutureBuilder(
-            future: _getAchievements(),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              return medals();
-            },
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Visibility(
-                visible: selected.name != "",
-                child: Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15.0),
-                        topRight: Radius.circular(15.0)),
-                    color: Color.fromARGB(255, 38, 44, 58),
-                  ),
-                  child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          selected = Achievements(name: "");
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      )),
-                ),
-              ),
-              AnimatedContainer(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15.0),
-                        topRight: Radius.circular(15.0)),
-                    color: Color.fromARGB(255, 38, 44, 58),
-                  ),
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  height: selected.name != "" ? 200 : 0,
-                  padding: const EdgeInsets.only(top: 12.0),
-                  duration: const Duration(seconds: 5),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          selected.name!,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Text(
-                          "${selected.medal == 1 ? selected.description1! : selected.medal == 2 ? selected.description2 : selected.medal == 3 ? selected.description3 : ''}",
-                          style: const TextStyle(
-                              color: Colors.white54, fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
-          )),
-
-      //Windows
-
-      Scaffold(
-        backgroundColor: DesignUtil.gray,
-        appBar: AppBar(
-          toolbarHeight: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: Row(
-          children: [
-            BodysUtil.navegationDesktop(
-                context,
-                3,
-                char.pixelChar(
-                    context, MediaQuery.of(context).size.width * 0.8, 0.2),
-                char.single),
-            AnimatedContainer(
-              margin: const EdgeInsets.only(
-                left: 8.0,
-                top: 16.0,
-              ),
-              duration: const Duration(milliseconds: 250),
-              width: selected.name != ""
-                  ? MediaQuery.of(context).size.width * 0.5 - 8.0
-                  : MediaQuery.of(context).size.width * 0.8 - 8.0,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15.0),
-                ),
-                color: Colors.black.withOpacity(0.1),
-              ),
-              child: FutureBuilder(
-                future: _getAchievements(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return Center(
-                    child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: medals()),
-                  );
-                },
-              ),
+        context,
+        Scaffold(
+            backgroundColor: DesignUtil.gray,
+            appBar: AppBar(
+              title: const Text("Achievements"),
+              backgroundColor: DesignUtil.darkGray,
             ),
-            AnimatedContainer(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                      topRight: Radius.circular(15.0)),
-                  color: Color.fromARGB(255, 38, 44, 58),
-                ),
-                width: selected.name != ""
-                    ? MediaQuery.of(context).size.width * 0.3
-                    : 0,
-                padding: const EdgeInsets.only(top: 12.0),
-                duration: const Duration(milliseconds: 250),
-                child: Stack(
-                  children: [
-                    IconButton(
+            body: FutureBuilder(
+              future: _getAchievements(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                return medals();
+              },
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Visibility(
+                  visible: selected.name != "",
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15.0),
+                          topRight: Radius.circular(15.0)),
+                      color: Color.fromARGB(255, 38, 44, 58),
+                    ),
+                    child: IconButton(
                         onPressed: () {
                           setState(() {
                             selected = Achievements(name: "");
@@ -165,34 +59,141 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           Icons.close,
                           color: Colors.white,
                         )),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          selected.name!,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                  ),
+                ),
+                AnimatedContainer(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15.0),
+                          topRight: Radius.circular(15.0)),
+                      color: Color.fromARGB(255, 38, 44, 58),
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    height: selected.name != "" ? 200 : 0,
+                    padding: const EdgeInsets.only(top: 12.0),
+                    duration: const Duration(seconds: 5),
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            selected.name!,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32.0, vertical: 56.0),
-                      child: Text(
-                        "${selected.medal == 1 ? selected.description1! : selected.medal == 2 ? selected.description2 : selected.medal == 3 ? selected.description3 : ''}",
-                        style: const TextStyle(
-                            color: Colors.white54, fontSize: 16),
-                      ),
-                    ),
-                  ],
-                )),
-          ],
-        ),
-      ),
-    );
+                        Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            "${selected.medal == 1 ? selected.description1! : selected.medal == 2 ? selected.description2 : selected.medal == 3 ? selected.description3 : ''}",
+                            style: const TextStyle(
+                                color: Colors.white54, fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    )),
+              ],
+            )),
+        Container()
+        //Windows
+
+        // Scaffold(
+        //   backgroundColor: DesignUtil.gray,
+        //   appBar: AppBar(
+        //     toolbarHeight: 0,
+        //     backgroundColor: Colors.transparent,
+        //   ),
+        //   body: Row(
+        //     children: [
+        //       BodysUtil.navegationDesktop(
+        //           context,
+        //           3,
+        //           char.pixelChar(
+        //               context, MediaQuery.of(context).size.width * 0.8, 0.2),
+        //           char.single),
+        //       AnimatedContainer(
+        //         margin: const EdgeInsets.only(
+        //           left: 8.0,
+        //           top: 16.0,
+        //         ),
+        //         duration: const Duration(milliseconds: 250),
+        //         width: selected.name != ""
+        //             ? MediaQuery.of(context).size.width * 0.5 - 8.0
+        //             : MediaQuery.of(context).size.width * 0.8 - 8.0,
+        //         height: MediaQuery.of(context).size.height,
+        //         decoration: BoxDecoration(
+        //           borderRadius: const BorderRadius.only(
+        //             topLeft: Radius.circular(15.0),
+        //           ),
+        //           color: Colors.black.withOpacity(0.1),
+        //         ),
+        //         child: FutureBuilder(
+        //           future: _getAchievements(),
+        //           builder:
+        //               (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        //             return Center(
+        //               child: SizedBox(
+        //                   width: MediaQuery.of(context).size.width * 0.5,
+        //                   child: medals()),
+        //             );
+        //           },
+        //         ),
+        //       ),
+        //       AnimatedContainer(
+        //           decoration: const BoxDecoration(
+        //             borderRadius: BorderRadius.only(
+        //                 topLeft: Radius.circular(15.0),
+        //                 topRight: Radius.circular(15.0)),
+        //             color: Color.fromARGB(255, 38, 44, 58),
+        //           ),
+        //           width: selected.name != ""
+        //               ? MediaQuery.of(context).size.width * 0.3
+        //               : 0,
+        //           padding: const EdgeInsets.only(top: 12.0),
+        //           duration: const Duration(milliseconds: 250),
+        //           child: Stack(
+        //             children: [
+        //               IconButton(
+        //                   onPressed: () {
+        //                     setState(() {
+        //                       selected = Achievements(name: "");
+        //                     });
+        //                   },
+        //                   icon: const Icon(
+        //                     Icons.close,
+        //                     color: Colors.white,
+        //                   )),
+        //               Padding(
+        //                 padding: const EdgeInsets.only(top: 16.0),
+        //                 child: Align(
+        //                   alignment: Alignment.topCenter,
+        //                   child: Text(
+        //                     selected.name!,
+        //                     style: const TextStyle(
+        //                         color: Colors.white,
+        //                         fontSize: 24,
+        //                         fontWeight: FontWeight.bold),
+        //                   ),
+        //                 ),
+        //               ),
+        //               Padding(
+        //                 padding: const EdgeInsets.symmetric(
+        //                     horizontal: 32.0, vertical: 56.0),
+        //                 child: Text(
+        //                   "${selected.medal == 1 ? selected.description1! : selected.medal == 2 ? selected.description2 : selected.medal == 3 ? selected.description3 : ''}",
+        //                   style: const TextStyle(
+        //                       color: Colors.white54, fontSize: 16),
+        //                 ),
+        //               ),
+        //             ],
+        //           )),
+        //     ],
+        //   ),
+        // ),
+
+        );
   }
 
   Widget medals() {

@@ -8,31 +8,29 @@ class Char {
   String name = "";
   ClassChar classChar = ClassChar.warrior;
   int color = 0xFF2196F3;
-  double exp = 0;
-  double expMax = 20;
+  int experience = 0;
+  int exp = 0;
+  int expMax = 20;
   int level = 1;
-  List<Achievements> achievements = <Achievements>[];
+  List<Achievements>? achievements;
   bool isLoaded = false;
 
   Char();
 
   Map toJson() => {
+        'key': key,
         'name': name,
         'classChar': classChar.toString(),
         'color': color,
-        'exp': exp,
+        'experience': experience,
         'level': level,
-        'achievements': achievements,
       };
 
   Char.fromJson(Map json)
-      : name = json['name'] ?? "",
+      : key = json['key'] ?? "",
+        name = json['name'] ?? "",
         classChar = CharUtil.getClassChar(json['classChar']),
         color = json['color'] ?? 0xFF2196F3,
-        exp = json['exp'] ?? 0,
-        level = json['level'] ?? 1,
-        achievements = json['achievements'] == null
-            ? <Achievements>[]
-            : List<Achievements>.from(json['achievements']
-                .map((model) => Achievements.fromJson(model)));
+        experience = json['experience'],
+        level = json['level'] ?? 1;
 }

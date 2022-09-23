@@ -27,143 +27,148 @@ Future<void> showDialogTask(BuildContext contextMain, Function createTask,
           ),
           backgroundColor: DesignUtil.gray,
           content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: ListBody(
-                children: <Widget>[
-                  TextFormField(
-                    initialValue: task.title,
-                    textInputAction: TextInputAction.next,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.white10),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.white54),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.red),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      errorStyle: const TextStyle(color: Colors.red),
-                    ),
-                    onChanged: (title) {
-                      task!.title = title;
-                    },
-                    validator: (title) {
-                      if (title == null || title.isEmpty || title.length < 3) {
-                        return "Greater than 3 characters";
-                      }
-                      return null;
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextFormField(
-                      initialValue: task.description,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Form(
+                key: formKey,
+                child: ListBody(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: task.title,
                       textInputAction: TextInputAction.next,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                          labelText: 'Description',
-                          labelStyle: const TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2, color: Colors.white10),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2, color: Colors.white54),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                      onChanged: (description) {
-                        task!.description = description;
+                        labelText: 'Title',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 2, color: Colors.white10),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 2, color: Colors.white54),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(width: 2, color: Colors.red),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorStyle: const TextStyle(color: Colors.red),
+                      ),
+                      onChanged: (title) {
+                        task!.title = title;
+                      },
+                      validator: (title) {
+                        if (title == null ||
+                            title.isEmpty ||
+                            title.length < 3) {
+                          return "Greater than 3 characters";
+                        }
+                        return null;
                       },
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 8.0, top: 16),
-                    child: Text(
-                      "Difficulty",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Slider(
-                      value: task.difficulty.index.toDouble() + 1,
-                      min: 1,
-                      max: 3,
-                      divisions: 2,
-                      activeColor: task.difficulty.color,
-                      inactiveColor: Colors.white10,
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            task!.difficulty =
-                                TaskUtil.getDifficultyInt(value.toInt());
-                          },
-                        );
-                      }),
-                  Center(
-                    child: Text(
-                      task.difficulty.string,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: task.isDaily,
-                        fillColor: MaterialStateProperty.resolveWith<Color?>(
-                          (Set<MaterialState> states) {
-                            return Colors
-                                .white10; // Use the component's default.
-                          },
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            task!.isDaily = value!;
-                          });
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: TextFormField(
+                        initialValue: task.description,
+                        textInputAction: TextInputAction.next,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            labelText: 'Description',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white10),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white54),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                        onChanged: (description) {
+                          task!.description = description;
                         },
                       ),
-                      const Text(
-                        "Daily",
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8.0, top: 16),
+                      child: Text(
+                        "Difficulty",
                         style: TextStyle(color: Colors.white),
                       ),
-                    ],
-                  ),
-                  if (!task.isDaily)
-                    TextFormField(
-                      controller: dateController,
-                      textInputAction: TextInputAction.next,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                          labelText: 'Date',
-                          labelStyle: const TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2, color: Colors.white10),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                width: 2, color: Colors.white54),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                      onTap: () {
-                        FocusScope.of(contextStf).unfocus();
-                        selectDate(contextStf, task!, dateController);
-                        setState(() {});
-                      },
                     ),
-                ],
+                    Slider(
+                        value: task.difficulty.index.toDouble() + 1,
+                        min: 1,
+                        max: 3,
+                        divisions: 2,
+                        activeColor: task.difficulty.color,
+                        inactiveColor: Colors.white10,
+                        onChanged: (value) {
+                          setState(
+                            () {
+                              task!.difficulty =
+                                  TaskUtil.getDifficultyInt(value.toInt());
+                            },
+                          );
+                        }),
+                    Center(
+                      child: Text(
+                        task.difficulty.string,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: task.isDaily,
+                          fillColor: MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              return Colors
+                                  .white10; // Use the component's default.
+                            },
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              task!.isDaily = value!;
+                            });
+                          },
+                        ),
+                        const Text(
+                          "Daily",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    if (!task.isDaily)
+                      TextFormField(
+                        controller: dateController,
+                        textInputAction: TextInputAction.next,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            labelText: 'Date',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white10),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 2, color: Colors.white54),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
+                        onTap: () {
+                          FocusScope.of(contextStf).unfocus();
+                          selectDate(contextStf, task!, dateController);
+                          setState(() {});
+                        },
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

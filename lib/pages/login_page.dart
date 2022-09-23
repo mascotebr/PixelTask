@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:provider/provider.dart';
@@ -55,8 +56,14 @@ class _LoginPageState extends State<LoginPage> {
       await context.read<AuthService>().login(email.text, password.text);
     } on AuthException catch (e) {
       setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
+
+      Fluttertoast.showToast(
+          msg: e.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
     }
   }
 
@@ -66,8 +73,13 @@ class _LoginPageState extends State<LoginPage> {
       await context.read<AuthService>().register(email.text, password.text);
     } on AuthException catch (e) {
       setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
+      Fluttertoast.showToast(
+          msg: e.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
     }
   }
 

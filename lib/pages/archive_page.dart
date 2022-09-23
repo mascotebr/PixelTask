@@ -27,100 +27,100 @@ class _ArchivePageState extends State<ArchivePage> {
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
-            backgroundColor: DesignUtil.gray,
-            appBar: AppBar(
-              title: const Text("Completed Tasks"),
-              backgroundColor: DesignUtil.darkGray,
-            ),
-            body: tasksFinished.list.isNotEmpty
-                ? Consumer<TaskFinishedRepository>(
-                    builder: (context, tfs, child) {
-                    return ListView.builder(
-                      itemCount: tfs.list.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return CardTask(
-                          task: tfs.list[index],
-                        );
-                      },
-                    );
-                  })
-                : const Center(
-                    child: Text(
-                    'No tasks here :(',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-                  )),
-            bottomNavigationBar: NavigationUtil.bottomNavigator(2, context)),
+          backgroundColor: DesignUtil.gray,
+          appBar: AppBar(
+            title: const Text("Completed Tasks"),
+            backgroundColor: DesignUtil.darkGray,
+          ),
+          body: tasksFinished.list.isNotEmpty
+              ? Consumer<TaskFinishedRepository>(
+                  builder: (context, tfs, child) {
+                  return ListView.builder(
+                    itemCount: tfs.list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CardTask(
+                        task: tfs.list[index],
+                      );
+                    },
+                  );
+                })
+              : const Center(
+                  child: Text(
+                  'No tasks here :(',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                  ),
+                )),
+        ),
+        Container());
+    //Windows
 
-        //Windows
-
-        Scaffold(
-            backgroundColor: DesignUtil.gray,
-            appBar: AppBar(
-              toolbarHeight: 0,
-              backgroundColor: Colors.transparent,
-            ),
-            body: Row(
-              children: [
-                BodysUtil.navegationDesktop(
-                    context,
-                    2,
-                    char.pixelChar(
-                        context, MediaQuery.of(context).size.width * 0.8, 0.2),
-                    char.single),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 8.0,
-                    top: 16.0,
-                  ),
-                  width: MediaQuery.of(context).size.width * 0.8 - 8.0,
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                    ),
-                    color: Colors.black.withOpacity(0.1),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 24.0, right: 24.0, top: 16.0),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 24.0, bottom: 16.0, left: 16.0),
-                        child: Consumer<TaskFinishedRepository>(
-                          builder: (context, tfs, child) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 16.0),
-                                  child: Text(
-                                    "Completed Tasks",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ),
-                                for (int index = 0;
-                                    index < tfs.list.length;
-                                    index++)
-                                  CardTask(task: tfs.list[index]),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            )));
+    // Scaffold(
+    //     backgroundColor: DesignUtil.gray,
+    //     appBar: AppBar(
+    //       toolbarHeight: 0,
+    //       backgroundColor: Colors.transparent,
+    //     ),
+    //     body: Row(
+    //       children: [
+    //         BodysUtil.navegationDesktop(
+    //             context,
+    //             2,
+    //             char.pixelChar(
+    //                 context, MediaQuery.of(context).size.width * 0.8, 0.2),
+    //             char.single),
+    //         Container(
+    //           margin: const EdgeInsets.only(
+    //             left: 8.0,
+    //             top: 16.0,
+    //           ),
+    //           width: MediaQuery.of(context).size.width * 0.8 - 8.0,
+    //           height: MediaQuery.of(context).size.height,
+    //           decoration: BoxDecoration(
+    //             borderRadius: const BorderRadius.only(
+    //               topLeft: Radius.circular(15.0),
+    //             ),
+    //             color: Colors.black.withOpacity(0.1),
+    //           ),
+    //           child: Padding(
+    //             padding: const EdgeInsets.only(
+    //                 left: 24.0, right: 24.0, top: 16.0),
+    //             child: SingleChildScrollView(
+    //               child: Padding(
+    //                 padding: const EdgeInsets.only(
+    //                     top: 24.0, bottom: 16.0, left: 16.0),
+    //                 child: Consumer<TaskFinishedRepository>(
+    //                   builder: (context, tfs, child) {
+    //                     return Column(
+    //                       mainAxisAlignment: MainAxisAlignment.start,
+    //                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                       children: [
+    //                         const Padding(
+    //                           padding: EdgeInsets.only(bottom: 16.0),
+    //                           child: Text(
+    //                             "Completed Tasks",
+    //                             style: TextStyle(
+    //                               color: Colors.white,
+    //                               fontSize: 22,
+    //                               fontWeight: FontWeight.w900,
+    //                             ),
+    //                           ),
+    //                         ),
+    //                         for (int index = 0;
+    //                             index < tfs.list.length;
+    //                             index++)
+    //                           CardTask(task: tfs.list[index]),
+    //                       ],
+    //                     );
+    //                   },
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         )
+    //       ],
+    //     )));
   }
 
   Widget divider() {

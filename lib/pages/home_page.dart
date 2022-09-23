@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/Difficulty.dart';
 import 'package:pixel_tasks/model/achievements.dart';
+import 'package:pixel_tasks/services/page_service.dart';
 import 'package:pixel_tasks/utils/navigation_util.dart';
 import 'package:pixel_tasks/utils/bodys_util.dart';
 import 'package:pixel_tasks/widgets/card_task.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late CharRepository char;
   late TaskRepository tasks;
   late TaskFinishedRepository tasksFinished;
+  late PageService pages;
 
   TextEditingController taskController = TextEditingController(text: "");
   TextEditingController dateController = TextEditingController();
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     tasksFinished.save(task);
 
-    char.addExp(exp);
+    char.addExp(exp.round());
 
     List<Achievements> newsAchievements =
         await char.checkAchivements(tasksFinished.list);
@@ -93,18 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _onDeleteTask(Task task) async {
-    //  await TaskUtil.deleteTask(task);
-    // await readAllTasks();
-    // setState(() {});
     tasks.remove(task);
-  }
-
-  Future<void> readAllTasks() async {
-    // await CharUtil.setChar();
-
-    // tasksFinished = await TaskUtil.readTasksFinished();
-
-    // setState(() {});
   }
 
   Future<void> newAchievementsDialogs(
@@ -118,173 +109,161 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    Task task = Task();
     char = context.watch<CharRepository>();
     tasks = context.watch<TaskRepository>();
     tasksFinished = context.watch<TaskFinishedRepository>();
+    pages = context.watch<PageService>();
+    pages.setFloatBottomButton(addButton());
 
-    return BodysUtil.bodyResponsiveHome(
-        context,
-        Scaffold(
-            backgroundColor: DesignUtil.gray,
-            appBar: AppBar(
-              title: const Text("Pixel Tasks"),
-              backgroundColor: DesignUtil.darkGray,
-              toolbarHeight: 0,
-            ),
-            body: Consumer<TaskRepository>(builder: (context, ts, child) {
-              return CustomScrollView(slivers: [
-                SliverAppBar(
-                    expandedHeight: 340.0,
-                    backgroundColor: Color(char.single.color).withAlpha(25),
-                    flexibleSpace: FlexibleSpaceBar(
-                        background: char.pixelChar(context, 0, 1))),
-                SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return taskItem(context, index, ts.list, false);
-                  },
-                  childCount: ts.list.isEmpty ? 1 : ts.list.length,
-                )),
-              ]);
-            }),
-            floatingActionButton: char.single.isLoaded
-                ? FloatingActionButton(
-                    onPressed: () => showDialogTask(
-                        context, _onCreateTask, _onEditTask, null),
-                    tooltip: 'New Task',
-                    backgroundColor: Color(char.single.color),
-                    child: const Icon(Icons.add),
-                  )
-                : Container(),
-            bottomNavigationBar: NavigationUtil.bottomNavigator(1, context)),
+    return tasks.list.isNotEmpty
+        ? ListView.builder(
+            itemCount: tasks.list.length,
+            itemBuilder: (context, index) {
+              return taskItem(context, index, tasks.list);
+            },
+          )
+        : Container();
 
-        //Windows
+    //Windows
 
-        Scaffold(
-            backgroundColor: DesignUtil.gray,
-            appBar: AppBar(
-              toolbarHeight: 0,
-              backgroundColor: Colors.transparent,
-            ),
-            body: Row(
-              children: [
-                BodysUtil.navegationDesktop(
-                    context,
-                    1,
-                    char.pixelChar(
-                        context, MediaQuery.of(context).size.width * 0.8, 0.2),
-                    char.single),
-                AnimatedContainer(
-                  margin: const EdgeInsets.only(
-                    left: 8.0,
-                    top: 16.0,
-                  ),
-                  duration: const Duration(milliseconds: 250),
-                  width: MediaQuery.of(context).size.width *
-                          (taskSelected.key != "" ? 0.5 : 0.8) -
-                      8.0,
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(15.0),
-                    ),
-                    color: Colors.black.withOpacity(0.1),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 24.0, right: 24.0, top: 16.0),
-                    child:
-                        Consumer<TaskRepository>(builder: (context, ts, child) {
-                      return Stack(
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                for (int index = 0;
-                                    index < ts.list.length ||
-                                        (ts.list.isEmpty && index == 0);
-                                    index++)
-                                  taskItem(context, index, ts.list, true),
-                              ],
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Card(
-                                elevation: 8,
-                                color: Colors.transparent,
-                                child: Form(
-                                  key: _formKeyTask,
-                                  child: TextFormField(
-                                    controller: taskController,
-                                    textInputAction: TextInputAction.next,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      prefixIcon: const Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      ),
-                                      filled: true,
-                                      fillColor: DesignUtil.gray,
-                                      labelText: 'New Task',
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2, color: Colors.white10),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2, color: Colors.white54),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2, color: Colors.red),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      errorStyle:
-                                          const TextStyle(color: Colors.red),
-                                    ),
-                                    onChanged: (title) {
-                                      task.title = title;
-                                    },
-                                    validator: (title) {
-                                      if (title == null ||
-                                          title.isEmpty ||
-                                          title.length < 3) {
-                                        return "Greater than 3 characters";
-                                      }
-                                      return null;
-                                    },
-                                    onEditingComplete: () {
-                                      if (!_formKeyTask.currentState!
-                                          .validate()) {
-                                        return;
-                                      }
-                                      FocusScope.of(context).unfocus();
-                                      taskController.text = "";
-                                      task.key = UniqueKey().toString();
-                                      task.date = DateTime.now();
-                                      _onCreateTask(task);
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    }),
-                  ),
-                ),
-                editTaskDesktop(context, taskSelected),
-              ],
-            )));
+    // Scaffold(
+    //     backgroundColor: DesignUtil.gray,
+    //     appBar: AppBar(
+    //       toolbarHeight: 0,
+    //       backgroundColor: Colors.transparent,
+    //     ),
+    //     body: Row(
+    //       children: [
+    //         BodysUtil.navegationDesktop(
+    //             context,
+    //             1,
+    //             char.pixelChar(
+    //                 context, MediaQuery.of(context).size.width * 0.8, 0.2),
+    //             char.single),
+    //         AnimatedContainer(
+    //           margin: const EdgeInsets.only(
+    //             left: 8.0,
+    //             top: 16.0,
+    //           ),
+    //           duration: const Duration(milliseconds: 250),
+    //           width: MediaQuery.of(context).size.width *
+    //                   (taskSelected.key != "" ? 0.5 : 0.8) -
+    //               8.0,
+    //           height: MediaQuery.of(context).size.height,
+    //           decoration: BoxDecoration(
+    //             borderRadius: const BorderRadius.only(
+    //               topLeft: Radius.circular(15.0),
+    //             ),
+    //             color: Colors.black.withOpacity(0.1),
+    //           ),
+    //           child: Padding(
+    //             padding: const EdgeInsets.only(
+    //                 left: 24.0, right: 24.0, top: 16.0),
+    //             child:
+    //                 Consumer<TaskRepository>(builder: (context, ts, child) {
+    //               return Stack(
+    //                 children: [
+    //                   SingleChildScrollView(
+    //                     child: Column(
+    //                       children: [
+    //                         for (int index = 0;
+    //                             index < ts.list.length ||
+    //                                 (ts.list.isEmpty && index == 0);
+    //                             index++)
+    //                           taskItem(context, index, ts.list, true),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                   Align(
+    //                     alignment: Alignment.bottomCenter,
+    //                     child: Padding(
+    //                       padding: const EdgeInsets.all(12.0),
+    //                       child: Card(
+    //                         elevation: 8,
+    //                         color: Colors.transparent,
+    //                         child: Form(
+    //                           key: _formKeyTask,
+    //                           child: TextFormField(
+    //                             controller: taskController,
+    //                             textInputAction: TextInputAction.next,
+    //                             style: const TextStyle(color: Colors.white),
+    //                             decoration: InputDecoration(
+    //                               prefixIcon: const Icon(
+    //                                 Icons.add,
+    //                                 color: Colors.white,
+    //                               ),
+    //                               filled: true,
+    //                               fillColor: DesignUtil.gray,
+    //                               labelText: 'New Task',
+    //                               labelStyle:
+    //                                   const TextStyle(color: Colors.white),
+    //                               enabledBorder: OutlineInputBorder(
+    //                                 borderSide: const BorderSide(
+    //                                     width: 2, color: Colors.white10),
+    //                                 borderRadius: BorderRadius.circular(4),
+    //                               ),
+    //                               focusedBorder: OutlineInputBorder(
+    //                                 borderSide: const BorderSide(
+    //                                     width: 2, color: Colors.white54),
+    //                                 borderRadius: BorderRadius.circular(4),
+    //                               ),
+    //                               errorBorder: OutlineInputBorder(
+    //                                 borderSide: const BorderSide(
+    //                                     width: 2, color: Colors.red),
+    //                                 borderRadius: BorderRadius.circular(4),
+    //                               ),
+    //                               errorStyle:
+    //                                   const TextStyle(color: Colors.red),
+    //                             ),
+    //                             onChanged: (title) {
+    //                               task.title = title;
+    //                             },
+    //                             validator: (title) {
+    //                               if (title == null ||
+    //                                   title.isEmpty ||
+    //                                   title.length < 3) {
+    //                                 return "Greater than 3 characters";
+    //                               }
+    //                               return null;
+    //                             },
+    //                             onEditingComplete: () {
+    //                               if (!_formKeyTask.currentState!
+    //                                   .validate()) {
+    //                                 return;
+    //                               }
+    //                               FocusScope.of(context).unfocus();
+    //                               taskController.text = "";
+    //                               task.key = UniqueKey().toString();
+    //                               task.date = DateTime.now();
+    //                               _onCreateTask(task);
+    //                             },
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   )
+    //                 ],
+    //               );
+    //             }),
+    //           ),
+    //         ),
+    //         editTaskDesktop(context, taskSelected),
+    //       ],
+    //     )
+    //     ));
+  }
+
+  Widget addButton() {
+    return Container(
+        child: char.single.isLoaded
+            ? FloatingActionButton(
+                onPressed: () =>
+                    showDialogTask(context, _onCreateTask, _onEditTask, null),
+                tooltip: 'New Task',
+                backgroundColor: Color(char.single.color),
+                child: const Icon(Icons.add),
+              )
+            : Container());
   }
 
   Widget cardDismissible(Task task, bool justRemove) {
@@ -385,40 +364,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ));
   }
 
-  Widget taskItem(
-      BuildContext context, int index, List<Task> tasks, bool windows) {
-    return ListBody(
+  Widget taskItem(BuildContext context, int index, List<Task> tasks) {
+    return Column(
       children: [
-        if (index == 0)
-          Padding(
-            padding: const EdgeInsets.only(top: 24.0, bottom: 16.0, left: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "My Tasks",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                if (windows)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      DateFormat('EEEE, MMMM d').format(DateTime.now()),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w100,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
         if (tasks.isNotEmpty &&
             HelpUtil.isToday(tasks[index].lastFinish) &&
             tasks[index].isDaily)

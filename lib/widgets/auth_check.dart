@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_tasks/pages/home_page.dart';
+import 'package:pixel_tasks/pages/pageview_page.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ class _AuthCheckState extends State<AuthCheck> {
     } else if (auth.userP == null) {
       return const LoginPage();
     } else {
-      return const HomePage();
+      return const PageViewPage();
     }
   }
 }

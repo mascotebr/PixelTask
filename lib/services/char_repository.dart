@@ -57,14 +57,15 @@ class CharRepository extends ChangeNotifier {
   save(Char char) async {
     single = char;
     single.isLoaded = true;
+
     if (await ConnectivityUtil.verify()) {
-      db.collection("users/${auth.userA!.uid}/char").doc().set({
+      db.collection("users/${auth.userA!.uid}/char").doc(single.key).set({
+        'key': single.key,
         'name': single.name,
         'classChar': single.classChar.toString(),
         'color': single.color,
-        'exp': single.exp,
+        'experience': single.experience,
         'level': single.level,
-        'achievements': achievements,
       });
     }
     await _writeCharDoc(char);
@@ -72,7 +73,7 @@ class CharRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get maxExp {
+  int get maxExp {
     single.expMax = 20;
     for (var i = 1; i < single.level; i++) {
       single.expMax *= 2;
@@ -81,15 +82,17 @@ class CharRepository extends ChangeNotifier {
   }
 
   double widthExp(BuildContext context) {
-    return MediaQuery.of(context).size.width * (single.exp / maxExp);
+    return MediaQuery.of(context).size.width * (single.experience / maxExp);
   }
 
-  Future<void> addExp(double exp) async {
-    single.exp += exp;
-    if (single.exp >= single.expMax) {
-      single.exp -= single.expMax;
+  Future<void> addExp(int exp) async {
+    single.experience += exp;
+    if (single.experience >= single.expMax) {
+      single.experience -= single.expMax;
       single.level++;
     }
+    notifyListeners();
+    save(single);
   }
 
   getAchivements() {
@@ -115,7 +118,8 @@ class CharRepository extends ChangeNotifier {
 
   Future<List<Achievements>> checkAchivements(List<Task> tasksFinished) async {
     getAchivements();
-    List<Achievements> actualAchievements = single.achievements;
+    List<Achievements>? actualAchievements =
+        single.achievements ?? <Achievements>[];
     single.achievements = <Achievements>[];
 
     //Level 5
@@ -129,7 +133,7 @@ class CharRepository extends ChangeNotifier {
           achievements[0].medal = 1;
         }
       }
-      single.achievements.add(achievements[0]);
+      single.achievements!.add(achievements[0]);
     }
 
     List<Task> tasksFinished = <Task>[];
@@ -155,7 +159,7 @@ class CharRepository extends ChangeNotifier {
           achievements[1].medal = 1;
         }
       }
-      single.achievements.add(achievements[1]);
+      single.achievements!.add(achievements[1]);
     }
 
     //100 Tasks writes
@@ -169,12 +173,12 @@ class CharRepository extends ChangeNotifier {
           achievements[2].medal = 1;
         }
       }
-      single.achievements.add(achievements[2]);
+      single.achievements!.add(achievements[2]);
     }
 
     List<Achievements> newAchievements = <Achievements>[];
 
-    for (var a in single.achievements) {
+    for (var a in single.achievements!) {
       //Add a new achievement
       List<Achievements> aux =
           actualAchievements.where((act) => a.name == act.name).toList();
@@ -199,21 +203,22 @@ class CharRepository extends ChangeNotifier {
 
   List<ClassChar> get listAchievements {
     List<ClassChar> list = <ClassChar>[];
+    single.achievements = single.achievements ?? <Achievements>[];
 
     list.add(ClassChar.archer);
     list.add(ClassChar.mage);
     list.add(ClassChar.thief);
     list.add(ClassChar.warrior);
 
-    if (single.achievements.where((a) => a.name == "E X P E R T").isNotEmpty) {
+    if (single.achievements!.where((a) => a.name == "E X P E R T").isNotEmpty) {
       list.add(ClassChar.liver);
     }
 
-    if (single.achievements.where((a) => a.name == "SUN WORKER").isNotEmpty) {
+    if (single.achievements!.where((a) => a.name == "SUN WORKER").isNotEmpty) {
       list.add(ClassChar.sunWorker);
     }
 
-    if (single.achievements
+    if (single.achievements!
         .where((a) => a.name == "MASTER WRITER")
         .isNotEmpty) {
       list.add(ClassChar.pencilMaster);
@@ -274,7 +279,7 @@ class CharRepository extends ChangeNotifier {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${single.exp.round()} / ${maxExp.round()}",
+                      "${single.experience.round()} / ${maxExp.round()}",
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -328,7 +333,13 @@ class CharRepository extends ChangeNotifier {
             ],
           )
         : Container(
-            color: DesignUtil.darkGray,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(180.0),
+              ),
+              color: DesignUtil.darkGray,
+            ),
             child: const Center(
               child: CircularProgressIndicator(
                 strokeWidth: 6,

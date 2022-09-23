@@ -5,6 +5,7 @@ import 'package:pixel_tasks/firebase_options.dart';
 import 'package:pixel_tasks/myapp.dart';
 import 'package:pixel_tasks/services/auth_service.dart';
 import 'package:pixel_tasks/services/char_repository.dart';
+import 'package:pixel_tasks/services/page_service.dart';
 import 'package:pixel_tasks/services/task_finished_repository.dart';
 import 'package:pixel_tasks/services/task_repository.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => AuthService()),
+      ChangeNotifierProvider(create: (context) => PageService()),
       ChangeNotifierProvider(
         create: (context) => CharRepository(
           auth: context.read<AuthService>(),
