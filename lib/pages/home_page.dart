@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late CharRepository char;
   late TaskRepository tasks;
   late TaskFinishedRepository tasksFinished;
-  late PageService pages;
 
   TextEditingController taskController = TextEditingController(text: "");
   TextEditingController dateController = TextEditingController();
@@ -112,17 +111,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     char = context.watch<CharRepository>();
     tasks = context.watch<TaskRepository>();
     tasksFinished = context.watch<TaskFinishedRepository>();
-    pages = context.watch<PageService>();
-    pages.setFloatBottomButton(addButton());
 
-    return tasks.list.isNotEmpty
-        ? ListView.builder(
-            itemCount: tasks.list.length,
-            itemBuilder: (context, index) {
-              return taskItem(context, index, tasks.list);
-            },
-          )
-        : Container();
+    return Scaffold(
+      backgroundColor: DesignUtil.darkGray,
+      appBar: AppBar(
+        title: const Text("Pixel Tasks"),
+        backgroundColor: DesignUtil.darkGray,
+        toolbarHeight: 0,
+      ),
+      body: Stack(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Text(
+              "My Tasks",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          Padding(
+              padding: const EdgeInsets.only(top: 68.0),
+              child: tasks.list.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: tasks.list.length,
+                      itemBuilder: (context, index) {
+                        return taskItem(context, index, tasks.list);
+                      },
+                    )
+                  : Container())
+        ],
+      ),
+      floatingActionButton: addButton(),
+    );
 
     //Windows
 
@@ -254,16 +277,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget addButton() {
-    return Container(
-        child: char.single.isLoaded
-            ? FloatingActionButton(
-                onPressed: () =>
-                    showDialogTask(context, _onCreateTask, _onEditTask, null),
-                tooltip: 'New Task',
-                backgroundColor: Color(char.single.color),
-                child: const Icon(Icons.add),
-              )
-            : Container());
+    return FloatingActionButton(
+      onPressed: () =>
+          showDialogTask(context, _onCreateTask, _onEditTask, null),
+      tooltip: 'New Task',
+      backgroundColor: DesignUtil.gray,
+      child: const Icon(
+        Icons.add,
+        size: 32,
+      ),
+      elevation: 8,
+    );
   }
 
   Widget cardDismissible(Task task, bool justRemove) {
@@ -274,7 +298,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ? DismissDirection.endToStart
             : DismissDirection.horizontal,
         background: Container(
-          color: DesignUtil.gray,
+          color: DesignUtil.darkGray,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +317,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         secondaryBackground: Container(
-          color: DesignUtil.gray,
+          color: DesignUtil.darkGray,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -340,22 +364,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 10.0),
-              color: const Color(0xff424C5E),
+              color: DesignUtil.gray,
               height: 3,
               width: MediaQuery.of(context).size.width * 0.42,
             ),
-            const Align(
+            Align(
               alignment: Alignment.center,
               child: Icon(
                 Icons.arrow_circle_down,
-                color: Color(0xff424C5E),
+                color: DesignUtil.gray,
               ),
             ),
             Align(
               alignment: Alignment.centerRight,
               child: Container(
                 margin: const EdgeInsets.only(top: 10.0),
-                color: const Color(0xff424C5E),
+                color: DesignUtil.gray,
                 height: 3,
                 width: MediaQuery.of(context).size.width * 0.42,
               ),

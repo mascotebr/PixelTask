@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pixel_tasks/model/task.dart';
 import 'package:pixel_tasks/model/Difficulty.dart';
+import 'package:pixel_tasks/utils/design_util.dart';
 import 'package:pixel_tasks/utils/help_util.dart';
 
 class CardTask extends StatefulWidget {
@@ -19,7 +20,7 @@ class _CardTaskState extends State<CardTask> {
     return Opacity(
       opacity: !HelpUtil.isToday(widget.task.lastFinish) ? 0.5 : 1,
       child: Card(
-        color: const Color(0xff424C5E),
+        color: DesignUtil.gray,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),

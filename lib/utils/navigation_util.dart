@@ -13,7 +13,7 @@ class NavigationUtil {
   static Widget bottomNavigator(
       BuildContext context, PageController pageController, PageService pages) {
     return BottomNavigationBar(
-      backgroundColor: DesignUtil.darkGray,
+      backgroundColor: DesignUtil.gray,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: Icon(
@@ -27,17 +27,16 @@ class NavigationUtil {
               size: 28,
             ),
             label: ""),
-
-        // BottomNavigationBarItem(
-        //     icon: Icon(
-        //       Icons.archive,
-        //       size: 28,
-        //     ),
-        //     label: ""),
+        BottomNavigationBarItem(
+            icon: Icon(
+              Icons.workspace_premium,
+              size: 28,
+            ),
+            label: ""),
       ],
       currentIndex: pages.page,
       selectedItemColor: Colors.white,
-      unselectedItemColor: DesignUtil.gray,
+      unselectedItemColor: DesignUtil.darkGray,
       onTap: (index) {
         if (index != pages.page) {
           onItemTapped(index, context, pageController);

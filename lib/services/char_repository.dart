@@ -262,8 +262,6 @@ class CharRepository extends ChangeNotifier {
       BuildContext context, double minusWidth, double maxWidthPorcent) {
     return single.isLoaded
         ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(
@@ -292,35 +290,33 @@ class CharRepository extends ChangeNotifier {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Stack(
                   children: [
-                    Opacity(
-                      opacity: 0.3,
-                      child: Container(
-                        color: Color(single.color),
-                        width: MediaQuery.of(context).size.width - minusWidth,
-                        height: 4,
-                      ),
+                    Container(
+                      width: MediaQuery.of(context).size.width - minusWidth,
+                      height: 12,
+                      color: DesignUtil.darkGray,
                     ),
                     Container(
+                      margin: const EdgeInsets.only(top: 2, left: 2, right: 2),
                       color: Color(single.color),
                       width: widthExp(context) * maxWidthPorcent,
-                      height: 4,
+                      height: 8,
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                padding: const EdgeInsets.only(bottom: 24.0),
                 child: Center(child: Image.asset(single.classChar.image)),
               ),
               Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 width: single.name.length * 20,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(30.0),
                   ),
-                  color: Color.fromARGB(255, 38, 44, 58),
+                  color: DesignUtil.gray,
                 ),
                 child: Center(
                   child: Text(single.name,

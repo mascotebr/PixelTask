@@ -30,6 +30,8 @@ class _PixelCharPageState extends State<PixelCharPage> {
     char = context.watch<CharRepository>();
     pages = context.watch<PageService>();
     if (charUpdate.key != char.single.key) _setCharUpdate();
+    pages = context.watch<PageService>();
+    pages.setFloatBottomButton(Container());
 
     return BodysUtil.bodyResponsiveHome(
         context,
@@ -40,50 +42,6 @@ class _PixelCharPageState extends State<PixelCharPage> {
               key: formKey,
               child: ListBody(
                 children: <Widget>[
-                  Stack(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 340,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(
-                            bottom: Radius.circular(180.0),
-                          ),
-                          color: Color(char.single.color).withAlpha(25),
-                        ),
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        child: Image.asset(
-                          charUpdate.classChar.image,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
-                            child: Image.asset(
-                              "images/medals/medal1.png",
-                              scale: 1,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (c, a1, a2) =>
-                                      const AchievementsPage(),
-                                  transitionsBuilder: (c, anim, a2, child) =>
-                                      FadeTransition(
-                                          opacity: anim, child: child),
-                                  transitionDuration:
-                                      const Duration(milliseconds: 300),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const Padding(
                     padding: EdgeInsets.all(24.0),
                     child: Text(

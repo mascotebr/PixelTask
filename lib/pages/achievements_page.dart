@@ -24,16 +24,36 @@ class _AchievementsPageState extends State<AchievementsPage> {
     return BodysUtil.bodyResponsiveHome(
         context,
         Scaffold(
-            backgroundColor: DesignUtil.gray,
+            backgroundColor: DesignUtil.darkGray,
             appBar: AppBar(
               title: const Text("Achievements"),
               backgroundColor: DesignUtil.darkGray,
+              toolbarHeight: 0,
             ),
-            body: FutureBuilder(
-              future: _getAchievements(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                return medals();
-              },
+            body: Stack(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Text(
+                    "My Achievements",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 42.0),
+                  child: FutureBuilder(
+                    future: _getAchievements(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      return medals();
+                    },
+                  ),
+                ),
+              ],
             ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
@@ -43,12 +63,11 @@ class _AchievementsPageState extends State<AchievementsPage> {
                 Visibility(
                   visible: selected.name != "",
                   child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15.0),
-                          topRight: Radius.circular(15.0)),
-                      color: Color.fromARGB(255, 38, 44, 58),
-                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15.0),
+                            topRight: Radius.circular(15.0)),
+                        color: DesignUtil.gray),
                     child: IconButton(
                         onPressed: () {
                           setState(() {
@@ -208,7 +227,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
   }
 
   Widget cardMedal(Achievements achievement) {
-    return Card(color: const Color(0xff424C5E), child: medal(achievement));
+    return Card(color: DesignUtil.gray, child: medal(achievement));
   }
 
   Widget medal(Achievements achievement) {

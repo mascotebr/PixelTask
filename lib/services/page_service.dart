@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class PageService extends ChangeNotifier {
   int page = 0;
@@ -12,7 +13,7 @@ class PageService extends ChangeNotifier {
   }
 
   setFloatBottomButton(Widget button) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(microseconds: 100));
     floatBottomButton = button;
     notifyListeners();
   }
